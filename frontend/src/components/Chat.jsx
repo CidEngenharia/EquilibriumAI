@@ -28,37 +28,50 @@ const LoadingDots = ({ isDarkMode }) => (
 
 // ── Parser de resposta estruturada ──────────────────────────────
 const SECTIONS = [
-  { key: 'decisao',     label: 'Melhor decisão',  icon: '✔', color: 'text-brand-teal' },
-  { key: 'justificativa', label: 'Justificativa', icon: '✔', color: 'text-brand-teal' },
-  { key: 'riscos',      label: 'Riscos',           icon: '⚠', color: 'text-amber-400' },
-  { key: 'alternativa', label: 'Alternativa',      icon: '✔', color: 'text-brand-lavender' },
-  { key: 'score',       label: 'Score',            icon: '★', color: 'text-yellow-400' },
+  { key: 'decisao',     label: 'Melhor decisão',      icon: '✔', color: 'text-brand-teal' },
+  { key: 'porque',      label: 'Por quê',             icon: '✔', color: 'text-brand-teal' },
+  { key: 'risco',       label: 'Risco',               icon: '⚠', color: 'text-amber-400' },
+  { key: 'alternativa', label: 'Alternativa',         icon: '✔', color: 'text-brand-lavender' },
+  { key: 'score',       label: 'Score de decisão',    icon: '★', color: 'text-yellow-400' },
+  { key: 'tecnicas',    label: 'Técnicas utilizadas', icon: '🧠', color: 'text-indigo-400' }
 ];
 
 function parseStructuredReply(text) {
-  // tenta extrair seções do formato "✔ Melhor decisão: ..."
   const sections = {};
+  const labels = SECTIONS.map(s => s.label).join('|');
   SECTIONS.forEach(({ label }) => {
-    const regex = new RegExp(`(?:✔|★|⚠)?\\s*${label}:\\s*(.+?)(?=(?:✔|★|⚠)?\\s*(?:Melhor decisão|Justificativa|Riscos|Alternativa|Score)|$)`, 'is');
+    const regex = new RegExp(`(?:✔|★|⚠|🧠)?\\s*${label}:\\s*(.+?)(?=(?:✔|★|⚠|🧠)?\\s*(?:${labels})|🔗|$)`, 'is');
     const match = text.match(regex);
     if (match) sections[label] = match[1].trim();
   });
   return Object.keys(sections).length >= 3 ? sections : null;
 }
 
-const ScoreBar = ({ text }) => {
-  const match = text?.match(/(\d+)\s*\/\s*10/);
-  const score = match ? parseInt(match[1], 10) : null;
-  if (!score) return <span className="text-sm">{text}</span>;
+const DetailedScoreBar = ({ text }) => {
+  const scores = text.split(',').map(s => {
+    const match = s.match(/(.*?):\s*(\d+)\s*\/\s*10/);
+    if (match) return { label: match[1].trim(), score: parseInt(match[2], 10) };
+    return null;
+  }).filter(Boolean);
+
+  if (scores.length === 0) return <span className="text-sm">{text}</span>;
+
   return (
-    <div className="flex items-center gap-3 mt-1">
-      <div className="flex-1 h-2 bg-slate-200 dark:bg-antigravity-panel rounded-full overflow-hidden">
-        <div
-          className="h-full rounded-full bg-gradient-to-r from-brand-teal to-brand-lavender transition-all duration-700"
-          style={{ width: `${score * 10}%` }}
-        />
-      </div>
-      <span className="text-sm font-semibold text-brand-teal shrink-0">{score}/10</span>
+    <div className="grid grid-cols-2 gap-4 mt-2">
+      {scores.map((item, idx) => (
+        <div key={idx} className="flex flex-col gap-1.5">
+          <div className="flex justify-between items-center text-[10px] font-medium uppercase tracking-wider text-slate-500">
+            <span>{item.label}</span>
+            <span className="text-brand-teal font-bold">{item.score}/10</span>
+          </div>
+          <div className="h-1.5 bg-slate-200 dark:bg-antigravity-base rounded-full overflow-hidden">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-brand-teal to-brand-lavender transition-all duration-700"
+              style={{ width: `${item.score * 10}%` }}
+            />
+          </div>
+        </div>
+      ))}
     </div>
   );
 };
@@ -79,14 +92,25 @@ const StructuredMessage = ({ text, isDarkMode }) => {
               <span>{icon}</span>
               <span>{label}</span>
             </div>
-            {label === 'Score' ? (
-              <ScoreBar text={value} />
+            {label === 'Score de decisão' ? (
+              <DetailedScoreBar text={value} />
             ) : (
               <p className={`text-sm leading-relaxed ${isDarkMode ? 'text-slate-200' : 'text-slate-700'}`}>{value}</p>
             )}
           </div>
         );
       })}
+      
+      {text.includes('🔗') && (
+        <button className="w-full mt-4 flex items-center justify-center gap-2 bg-gradient-to-r from-brand-teal to-brand-lavender text-white px-4 py-3 rounded-xl text-sm font-semibold hover:opacity-90 transition-all shadow-md active:scale-[0.98]">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <line x1="3" y1="9" x2="21" y2="9"/>
+            <line x1="9" y1="21" x2="9" y2="9"/>
+          </svg>
+          Abrir Dashboard de Decisão
+        </button>
+      )}
     </div>
   );
 };
@@ -120,7 +144,7 @@ const Message = ({ msg, isDarkMode }) => {
 
 // ── Sugestões rápidas por contexto ──────────────────────────────
 const SUGGESTIONS = {
-  geral:           ['Devo mudar de emprego?', 'Mudar de cidade vale a pena?', 'Abrir meu próprio negócio'],
+  geral:           ['Trabalho', 'Relacionamento', 'Financeiro', 'Propósito'],
   psicologia:      ['Estou procrastinando muito', 'Tenho medo de decidir errado', 'Como lidar com viés de confirmação'],
   zen:             ['Como encontrar meu Ikigai?', 'Aplicar Kaizen na rotina', 'O que é Wabi-sabi?'],
   espiritualidade: ['Fé e trabalho juntos', 'Como ter paz nas decisões', 'Propósito de vida cristão'],
@@ -130,7 +154,7 @@ const SUGGESTIONS = {
 
 // ── Mensagem de boas-vindas por contexto ────────────────────────
 const WELCOME = {
-  geral:           'Olá! Qual decisão está pesando hoje? Descreva a situação e analisarei com múltiplas perspectivas.',
+  geral:           'Olá! O EquilibriumAI utiliza um motor híbrido (Ikigai, Estoicismo, Psicologia e Evangelho) para te dar a melhor direção.\n\nQual área da sua vida precisa de clareza hoje?',
   psicologia:      'Vamos identificar os vieses que estão influenciando sua decisão. O que está passando pela sua mente?',
   zen:             'A sabedoria japonesa nos ensina que toda decisão carrega em si o caminho. Qual é o seu dilema?',
   espiritualidade: 'Buscaremos sabedoria nos princípios do Reino. O que está em seu coração?',
