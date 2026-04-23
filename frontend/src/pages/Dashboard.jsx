@@ -1,94 +1,129 @@
-import React, { useState } from 'react';
-import Sidebar from '../components/Sidebar';
-import Chat from '../components/Chat';
-import IkigaiDiagram from '../components/IkigaiDiagram';
+import React, { useState, useEffect } from 'react';
+import Sidebar, { MenuIcon } from '../components/Sidebar.jsx';
+import Chat from '../components/Chat.jsx';
+import IkigaiDiagram from '../components/IkigaiDiagram.jsx';
 
 const Dashboard = () => {
   const [activeContext, setActiveContext] = useState('geral');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Fecha sidebar ao selecionar item no mobile
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) setIsSidebarOpen(true);
+      else setIsSidebarOpen(false);
+    };
+    window.addEventListener('resize', handleResize);
+    handleResize(); // init
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const toggleTheme = () => setIsDarkMode(!isDarkMode);
+
+  // Applica classe dark no HTML global se necessário (opcional)
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex font-sans overflow-hidden">
-      {/* Premium Mesh Background */}
-      <div className="bg-mesh"></div>
-
-      <Sidebar activeContext={activeContext} onContextChange={setActiveContext} />
+    <div className={`flex h-screen overflow-hidden ${isDarkMode ? 'dark bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
       
-      <main className="ml-72 flex-1 h-screen overflow-y-auto custom-scrollbar relative">
-        {/* Subtle decorative elements */}
-        <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-violet-600/5 to-transparent pointer-events-none"></div>
+      {/* Sidebar Mobile Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-20 lg:hidden animate-fade-in"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
 
-        <div className="max-w-[1400px] mx-auto p-10 relative z-10">
-            {/* Header Section */}
-            <div className="flex items-center gap-4 mb-8 animate-in">
-              <div className="relative flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-emerald-500/5 border border-emerald-500/10">
-                <div className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                </div>
-                <span className="text-[10px] text-emerald-400/80 font-normal uppercase tracking-[0.2em] leading-none">
-                  Assistente Online
-                </span>
-              </div>
+      {/* Sidebar */}
+      <Sidebar 
+        activeContext={activeContext} 
+        setActiveContext={(ctx) => {
+          setActiveContext(ctx);
+          if (window.innerWidth < 1024) setIsSidebarOpen(false);
+        }}
+        isOpen={isSidebarOpen}
+        isDarkMode={isDarkMode}
+      />
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col h-full overflow-hidden relative">
+        
+        {/* Header (Top bar) */}
+        <header className={`shrink-0 h-16 px-4 flex items-center justify-between border-b z-10 transition-colors ${
+          isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-white border-slate-100 shadow-sm'
+        }`}>
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={toggleSidebar}
+              className={`p-2 -ml-2 rounded-lg lg:hidden transition-colors ${
+                isDarkMode ? 'hover:bg-slate-800 text-slate-300' : 'hover:bg-slate-100 text-slate-600'
+              }`}
+            >
+              <MenuIcon />
+            </button>
+            <h1 className="font-display font-semibold text-lg">
+              {activeContext === 'ikigai' ? 'Mapa Ikigai' : 'Assistente de Decisão'}
+            </h1>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={toggleTheme}
+              className={`p-2 rounded-xl transition-all ${
+                isDarkMode 
+                  ? 'bg-slate-800 text-amber-400 hover:bg-slate-700' 
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              {isDarkMode ? (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="5" />
+                  <line x1="12" y1="1" x2="12" y2="3" />
+                  <line x1="12" y1="21" x2="12" y2="23" />
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                  <line x1="1" y1="12" x2="3" y2="12" />
+                  <line x1="21" y1="12" x2="23" y2="12" />
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                </svg>
+              ) : (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+              )}
+            </button>
+            <div className={`w-9 h-9 rounded-full flex items-center justify-center font-medium text-sm border-2 ${
+              isDarkMode 
+                ? 'bg-slate-800 border-slate-700 text-brand-teal' 
+                : 'bg-slate-50 border-white text-brand-teal shadow-sm'
+            }`}>
+              US
             </div>
+          </div>
+        </header>
 
-            {/* Content Grid */}
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-10">
-              {/* Chat Area */}
-              <div className="xl:col-span-8 animate-in" style={{ animationDelay: '0.1s' }}>
-                <Chat context={activeContext} />
-              </div>
-
-              {/* Sidebar Info Area */}
-              <div className="xl:col-span-4 space-y-10 animate-in" style={{ animationDelay: '0.2s' }}>
-                {/* Knowledge Cards from Print */}
-                <div className="space-y-6">
-                    <KnowledgeCard 
-                      title="KAIZEN" 
-                      description="Pequenas melhorias diárias levam a resultados excepcionais." 
-                      icon={<div className="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center border border-white/5 shadow-inner">📈</div>}
-                    />
-                    <KnowledgeCard 
-                      title="WABI-SABI" 
-                      description="Encontre beleza na imperfeição e na impermanência." 
-                      icon={<div className="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center border border-white/5 shadow-inner">🍂</div>}
-                    />
-                </div>
-
-                {/* Quick Stats */}
-                <div className="grid grid-cols-2 gap-6">
-                    <StatCard label="Decisões" value="12" growth="+2" />
-                    <StatCard label="Equilíbrio" value="92%" growth="+5%" />
-                </div>
-              </div>
+        {/* Content Area */}
+        <div className={`flex-1 overflow-hidden relative ${isDarkMode ? 'bg-slate-950' : 'bg-slate-50'}`}>
+          {activeContext === 'ikigai' ? (
+            <div className="h-full overflow-y-auto p-6 md:p-8">
+              <IkigaiDiagram isDarkMode={isDarkMode} />
             </div>
+          ) : (
+            <Chat key={activeContext} context={activeContext} isDarkMode={isDarkMode} />
+          )}
         </div>
       </main>
     </div>
   );
 };
-
-const KnowledgeCard = ({ title, description, icon }) => (
-  <div className="bg-[#1E1F26] border border-white/5 rounded-[24px] p-6 hover:bg-white/[0.02] transition-all group cursor-pointer">
-    <div className="flex gap-4">
-      <div className="flex-shrink-0">
-        {icon}
-      </div>
-      <div>
-        <h4 className="text-xs font-normal text-white uppercase tracking-widest mb-1 group-hover:text-violet-400 transition-colors">{title}</h4>
-        <p className="text-xs text-slate-400 leading-relaxed font-normal">{description}</p>
-      </div>
-    </div>
-  </div>
-);
-
-const StatCard = ({ label, value, growth }) => (
-  <div className="glass-card rounded-[28px] p-6 group">
-    <p className="text-[10px] text-slate-500 font-normal uppercase tracking-widest mb-2">{label}</p>
-    <div className="flex items-end gap-3">
-      <h3 className="text-2xl font-normal text-white leading-none">{value}</h3>
-      <span className="text-[10px] font-normal text-emerald-400 mb-0.5">{growth}</span>
-    </div>
-  </div>
-);
 
 export default Dashboard;

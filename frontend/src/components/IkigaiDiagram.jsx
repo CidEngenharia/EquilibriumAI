@@ -1,56 +1,148 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-const IkigaiDiagram = () => {
+const CATEGORIES = [
+  { id: 'love',       label: 'O que você Ama',        color: '#f87171', bg: 'rgba(248,113,113,0.15)' },
+  { id: 'goodAt',     label: 'No que você é Bom',     color: '#60a5fa', bg: 'rgba(96,165,250,0.15)' },
+  { id: 'worldNeeds', label: 'O que o Mundo Precisa', color: '#34d399', bg: 'rgba(52,211,153,0.15)' },
+  { id: 'paidFor',    label: 'Pelo que te Pagam',     color: '#f59e0b', bg: 'rgba(245,158,11,0.15)' },
+];
+
+const INTERSECTIONS = [
+  { label: 'Paixão',    top: '22%', left: '28%',  desc: 'Amo + Sou Bom' },
+  { label: 'Missão',    top: '22%', right: '28%', desc: 'Amo + Mundo Precisa' },
+  { label: 'Profissão', bottom: '22%', left: '28%', desc: 'Sou Bom + Me Pagam' },
+  { label: 'Vocação',   bottom: '22%', right: '28%', desc: 'Mundo Precisa + Me Pagam' },
+];
+
+const IkigaiDiagram = ({ isDarkMode }) => {
+  const [activeCategory, setActiveCategory] = useState(null);
+  const [items, setItems] = useState({ love: [], goodAt: [], worldNeeds: [], paidFor: [] });
+  const [newItem, setNewItem] = useState('');
+
+  const addItem = () => {
+    if (!newItem.trim() || !activeCategory) return;
+    setItems(prev => ({
+      ...prev,
+      [activeCategory]: [...prev[activeCategory], newItem.trim()],
+    }));
+    setNewItem('');
+  };
+
+  const removeItem = (cat, idx) => {
+    setItems(prev => ({ ...prev, [cat]: prev[cat].filter((_, i) => i !== idx) }));
+  };
+
+  const category = CATEGORIES.find(c => c.id === activeCategory);
+
   return (
-    <div className="glass-card rounded-[32px] p-8 shadow-xl relative overflow-hidden group">
-      {/* Decorative gradient */}
-      <div className="absolute -right-20 -top-20 w-40 h-40 bg-pink-500/10 blur-[60px] group-hover:bg-pink-500/20 transition-colors"></div>
-      
-      <div className="flex items-center justify-between mb-8 relative z-10">
-        <div>
-          <h3 className="text-lg font-normal text-white tracking-tight">Ikigai Framework</h3>
-          <p className="text-[10px] text-slate-400 font-normal uppercase tracking-widest mt-1">Convergência de Propósito</p>
-        </div>
-        <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-colors cursor-help">
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-        </div>
+    <div className="space-y-8 max-w-3xl mx-auto">
+      <div className="text-center">
+        <h2 className={`font-display text-2xl font-semibold ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>
+          Mapa Ikigai
+        </h2>
+        <p className={`text-sm mt-1 ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+          Clique em cada círculo para adicionar seus elementos e descobrir seu propósito
+        </p>
       </div>
-      
-      <div className="relative w-full aspect-square flex items-center justify-center scale-90 sm:scale-100">
-        {/* Simplified conceptual diagram with sophisticated styling */}
-        <Circle label="Paixão" color="bg-pink-500" pos="-translate-y-10" />
-        <Circle label="Profissão" color="bg-violet-500" pos="translate-x-10 translate-y-4" />
-        <Circle label="Missão" color="bg-emerald-500" pos="-translate-x-10 translate-y-4" />
-        
-        {/* Core center */}
-        <div className="z-20 w-24 h-24 rounded-full glass border border-white/20 flex flex-col items-center justify-center shadow-2xl">
-            <span className="text-[10px] font-normal text-violet-400 uppercase tracking-tighter leading-none">Viver</span>
-            <span className="text-lg font-normal text-white italic">Ikigai</span>
+
+      {/* Diagrama SVG */}
+      <div className={`relative rounded-2xl p-8 border ${isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-100 shadow-xl'}`}>
+        <svg viewBox="0 0 400 400" className="w-full max-w-sm mx-auto">
+          {/* Círculos */}
+          {[
+            { cx: 170, cy: 160, cat: 'love',       color: '#f87171' },
+            { cx: 230, cy: 160, cat: 'goodAt',     color: '#60a5fa' },
+            { cx: 170, cy: 240, cat: 'worldNeeds', color: '#34d399' },
+            { cx: 230, cy: 240, cat: 'paidFor',    color: '#f59e0b' },
+          ].map(({ cx, cy, cat, color }) => (
+            <circle
+              key={cat}
+              cx={cx} cy={cy} r={80}
+              fill={color}
+              fillOpacity={activeCategory === cat ? 0.35 : 0.15}
+              stroke={color}
+              strokeWidth={activeCategory === cat ? 2 : 1}
+              strokeOpacity={0.6}
+              style={{ cursor: 'pointer', transition: 'all 0.2s' }}
+              onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
+            />
+          ))}
+
+          {/* Rótulos IKIGAI no centro */}
+          <text x="200" y="196" textAnchor="middle" fontSize="11" fontWeight="600" fill={isDarkMode ? '#fff' : '#1e293b'} fontFamily="Inter">IKIGAI</text>
+          <text x="200" y="210" textAnchor="middle" fontSize="8" fill={isDarkMode ? '#94a3b8' : '#64748b'} fontFamily="Inter">propósito</text>
+
+          {/* Rótulos dos círculos */}
+          {[
+            { x: 142, y: 110, label: 'Amo', color: '#f87171' },
+            { x: 258, y: 110, label: 'Sou Bom', color: '#60a5fa' },
+            { x: 142, y: 295, label: 'Mundo Precisa', color: '#34d399' },
+            { x: 258, y: 295, label: 'Me Pagam', color: '#f59e0b' },
+          ].map(({ x, y, label, color }) => (
+            <text key={label} x={x} y={y} textAnchor="middle" fontSize="9" fill={color} fontWeight="600" fontFamily="Inter">
+              {label}
+            </text>
+          ))}
+        </svg>
+
+        {/* Intersecções */}
+        <div className="grid grid-cols-2 gap-2 mt-4">
+          {INTERSECTIONS.map(({ label, desc }) => (
+            <div key={label} className={`rounded-xl p-3 text-center border ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-100'}`}>
+              <p className={`text-xs font-semibold ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>{label}</p>
+              <p className={`text-[10px] mt-0.5 ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>{desc}</p>
+            </div>
+          ))}
         </div>
       </div>
 
-      <div className="mt-10 space-y-3 relative z-10">
-        <WisdomCard title="Kaizen" text="Pequenas melhorias diárias levam a resultados excepcionais." icon="📈" />
-        <WisdomCard title="Wabi-sabi" text="Encontre beleza na imperfeição e na impermanência." icon="🍂" />
-      </div>
+      {/* Painel de adição */}
+      {activeCategory && category && (
+        <div className={`rounded-2xl border p-6 animate-fade-in ${isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-100 shadow-lg'}`}>
+          <h3 className={`font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-slate-800'}`} style={{ color: category.color }}>
+            {category.label}
+          </h3>
+          <div className="flex gap-2 mb-4">
+            <input
+              type="text"
+              value={newItem}
+              onChange={e => setNewItem(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && addItem()}
+              placeholder="Ex: Programar, Ensinar, Criar..."
+              className={`flex-1 px-4 py-2.5 rounded-xl border text-sm outline-none transition-all ${
+                isDarkMode
+                  ? 'bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-brand-teal/50'
+                  : 'bg-slate-50 border-slate-200 text-slate-800 focus:border-brand-teal/50 focus:bg-white'
+              }`}
+            />
+            <button
+              onClick={addItem}
+              className="px-4 py-2.5 rounded-xl text-sm font-medium text-white transition-opacity hover:opacity-90"
+              style={{ backgroundColor: category.color }}
+            >
+              Adicionar
+            </button>
+          </div>
+
+          {/* Lista de itens */}
+          {items[activeCategory].length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {items[activeCategory].map((item, i) => (
+                <span
+                  key={i}
+                  className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full text-white"
+                  style={{ backgroundColor: category.color + 'cc' }}
+                >
+                  {item}
+                  <button onClick={() => removeItem(activeCategory, i)} className="opacity-70 hover:opacity-100 ml-0.5">×</button>
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
-
-const Circle = ({ label, color, pos }) => (
-  <div className={`absolute w-36 h-36 rounded-full ${color}/10 border-2 border-${color.split('-')[1]}-500/20 backdrop-blur-[2px] flex items-center justify-center ${pos} transition-all duration-500 hover:scale-105 hover:bg-${color.split('-')[1]}-500/20`}>
-    <span className={`text-[9px] font-normal uppercase tracking-widest text-${color.split('-')[1]}-400`}>{label}</span>
-  </div>
-);
-
-const WisdomCard = ({ title, text, icon }) => (
-  <div className="flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors group/card">
-    <div className="text-xl flex-shrink-0 group-hover/card:scale-125 transition-transform">{icon}</div>
-    <div>
-      <h5 className="text-xs font-normal text-white uppercase tracking-wider">{title}</h5>
-      <p className="text-xs text-slate-400 mt-1 leading-relaxed">{text}</p>
-    </div>
-  </div>
-);
 
 export default IkigaiDiagram;
