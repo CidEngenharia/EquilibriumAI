@@ -46,7 +46,7 @@ const IkigaiDiagram = ({ isDarkMode }) => {
       </div>
 
       {/* Diagrama SVG */}
-      <div className={`relative rounded-2xl p-8 border ${isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-100 shadow-xl'}`}>
+      <div className={`relative rounded-2xl p-8 border ${isDarkMode ? 'bg-antigravity-panel border-antigravity-border' : 'bg-white border-slate-100 shadow-xl'}`}>
         <svg viewBox="0 0 400 400" className="w-full max-w-sm mx-auto">
           {/* Círculos */}
           {[
@@ -88,7 +88,7 @@ const IkigaiDiagram = ({ isDarkMode }) => {
         {/* Intersecções */}
         <div className="grid grid-cols-2 gap-2 mt-4">
           {INTERSECTIONS.map(({ label, desc }) => (
-            <div key={label} className={`rounded-xl p-3 text-center border ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-100'}`}>
+            <div key={label} className={`rounded-xl p-3 text-center border ${isDarkMode ? 'bg-antigravity-panel border-antigravity-border' : 'bg-slate-50 border-slate-100'}`}>
               <p className={`text-xs font-semibold ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>{label}</p>
               <p className={`text-[10px] mt-0.5 ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>{desc}</p>
             </div>
@@ -98,7 +98,7 @@ const IkigaiDiagram = ({ isDarkMode }) => {
 
       {/* Painel de adição */}
       {activeCategory && category && (
-        <div className={`rounded-2xl border p-6 animate-fade-in ${isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-100 shadow-lg'}`}>
+        <div className={`rounded-2xl border p-6 animate-fade-in ${isDarkMode ? 'bg-antigravity-panel border-antigravity-border' : 'bg-white border-slate-100 shadow-lg'}`}>
           <h3 className={`font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-slate-800'}`} style={{ color: category.color }}>
             {category.label}
           </h3>
@@ -111,7 +111,7 @@ const IkigaiDiagram = ({ isDarkMode }) => {
               placeholder="Ex: Programar, Ensinar, Criar..."
               className={`flex-1 px-4 py-2.5 rounded-xl border text-sm outline-none transition-all ${
                 isDarkMode
-                  ? 'bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-brand-teal/50'
+                  ? 'bg-antigravity-input border-antigravity-border text-white placeholder:text-slate-500 focus:border-brand-teal/50'
                   : 'bg-slate-50 border-slate-200 text-slate-800 focus:border-brand-teal/50 focus:bg-white'
               }`}
             />

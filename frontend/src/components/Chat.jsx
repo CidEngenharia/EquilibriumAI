@@ -16,7 +16,7 @@ const AlertIcon = () => (
 
 // ── Loading dots ────────────────────────────────────────────────
 const LoadingDots = ({ isDarkMode }) => (
-  <div className={`flex items-center gap-1 px-4 py-3 rounded-2xl rounded-bl-sm w-fit animate-fade-in ${isDarkMode ? 'bg-slate-800' : 'bg-white border border-slate-100 shadow-sm'}`}>
+  <div className={`flex items-center gap-1 px-4 py-3 rounded-2xl rounded-bl-sm w-fit animate-fade-in ${isDarkMode ? 'bg-antigravity-panel' : 'bg-white border border-slate-100 shadow-sm'}`}>
     {[1, 2, 3].map((i) => (
       <div
         key={i}
@@ -52,7 +52,7 @@ const ScoreBar = ({ text }) => {
   if (!score) return <span className="text-sm">{text}</span>;
   return (
     <div className="flex items-center gap-3 mt-1">
-      <div className="flex-1 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+      <div className="flex-1 h-2 bg-slate-200 dark:bg-antigravity-panel rounded-full overflow-hidden">
         <div
           className="h-full rounded-full bg-gradient-to-r from-brand-teal to-brand-lavender transition-all duration-700"
           style={{ width: `${score * 10}%` }}
@@ -74,7 +74,7 @@ const StructuredMessage = ({ text, isDarkMode }) => {
         const value = parsed[label];
         if (!value) return null;
         return (
-          <div key={label} className={`rounded-xl p-3 ${isDarkMode ? 'bg-slate-700/50' : 'bg-slate-50'}`}>
+          <div key={label} className={`rounded-xl p-3 ${isDarkMode ? 'bg-antigravity-panel' : 'bg-slate-50'}`}>
             <div className={`flex items-center gap-1.5 mb-1 text-[11px] font-semibold uppercase tracking-wide ${color}`}>
               <span>{icon}</span>
               <span>{label}</span>
@@ -201,7 +201,7 @@ const Chat = ({ context, isDarkMode }) => {
   const isEmpty = messages.length === 0;
 
   return (
-    <div className={`flex flex-col h-full ${isDarkMode ? 'bg-slate-950' : 'bg-slate-50'}`}>
+    <div className={`flex flex-col h-full ${isDarkMode ? 'bg-antigravity-base' : 'bg-slate-50'}`}>
 
       {/* Área de mensagens */}
       <div className="flex-1 overflow-y-auto scrollbar-thin px-4 py-6 space-y-4">
@@ -227,7 +227,7 @@ const Chat = ({ context, isDarkMode }) => {
                 onClick={() => handleSuggestion(s)}
                 className={`text-xs px-3 py-1.5 rounded-full border transition-all hover:scale-[1.02] active:scale-95 ${
                   isDarkMode
-                    ? 'border-slate-700 text-slate-300 hover:border-brand-teal/50 hover:text-brand-teal bg-slate-800/50'
+                    ? 'border-antigravity-border text-slate-300 hover:border-brand-teal/50 hover:text-brand-teal bg-antigravity-panel'
                     : 'border-slate-200 text-slate-500 hover:border-brand-teal/50 hover:text-brand-teal bg-white'
                 }`}
               >
@@ -268,10 +268,10 @@ const Chat = ({ context, isDarkMode }) => {
       </div>
 
       {/* Input area */}
-      <div className={`px-4 pb-4 pt-2 border-t shrink-0 ${isDarkMode ? 'border-slate-800 bg-slate-950' : 'border-slate-100 bg-slate-50'}`}>
+      <div className={`px-4 pb-4 pt-2 border-t shrink-0 ${isDarkMode ? 'border-antigravity-border bg-antigravity-base' : 'border-slate-100 bg-slate-50'}`}>
         <div className={`flex items-end gap-3 rounded-2xl border px-4 py-3 transition-all ${
           isDarkMode
-            ? 'bg-slate-900 border-slate-700 focus-within:border-brand-teal/50'
+            ? 'bg-antigravity-input border-antigravity-border focus-within:border-brand-teal/50'
             : 'bg-white border-slate-200 shadow-sm focus-within:border-brand-teal/50 focus-within:shadow-brand-teal/10'
         }`}>
           <textarea
@@ -291,7 +291,7 @@ const Chat = ({ context, isDarkMode }) => {
             disabled={isLoading || !input.trim()}
             className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all active:scale-90 ${
               isLoading || !input.trim()
-                ? 'bg-slate-200 text-slate-400 dark:bg-slate-700 dark:text-slate-500 cursor-not-allowed'
+                ? 'bg-slate-200 text-slate-400 dark:bg-antigravity-panel dark:text-slate-500 cursor-not-allowed'
                 : 'bg-gradient-to-br from-brand-teal to-brand-lavender text-white hover:opacity-90 shadow-md'
             }`}
           >

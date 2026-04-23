@@ -39,7 +39,7 @@
     @apply bg-white border border-slate-100 text-slate-700 shadow-sm rounded-bl-sm;
   }
   .message-ai-dark {
-    @apply bg-slate-800 border border-slate-700 text-slate-200 rounded-bl-sm;
+    @apply bg-antigravity-panel border border-antigravity-border text-slate-200 rounded-bl-sm;
   }
 }
 

@@ -11,6 +11,12 @@ export default {
           lavender: '#9b82b9',
           'lavender-dark': '#7d67a0',
         },
+        antigravity: {
+          base: '#1e1e1e',
+          panel: '#252526',
+          input: '#2d2d30',
+          border: '#333333',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

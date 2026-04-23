@@ -66,7 +66,7 @@ const Sidebar = ({ activeContext, setActiveContext, isOpen, isDarkMode }) => {
     <aside
       className={`
         fixed lg:sticky top-0 left-0 h-screen z-30 flex flex-col
-        bg-[#0f1724] border-r border-white/5
+        bg-antigravity-base border-r border-antigravity-border
         transition-all duration-300 ease-in-out shrink-0
         ${isOpen ? 'w-64 translate-x-0' : 'w-0 -translate-x-full lg:w-0 lg:translate-x-0 overflow-hidden'}
       `}
