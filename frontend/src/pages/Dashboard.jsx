@@ -37,9 +37,9 @@ const Dashboard = () => {
       {/* Background Animado Premium (Bolhas Lilás e Roxas) */}
       {isDarkMode && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-          <div className="absolute top-[-10%] left-[-10%] w-[40rem] h-[40rem] bg-brand-lavender/10 rounded-full mix-blend-screen filter blur-[128px] opacity-70 animate-blob"></div>
-          <div className="absolute top-[30%] right-[-10%] w-[35rem] h-[35rem] bg-indigo-500/10 rounded-full mix-blend-screen filter blur-[128px] opacity-60 animate-blob animation-delay-2000"></div>
-          <div className="absolute bottom-[-20%] left-[20%] w-[45rem] h-[45rem] bg-purple-600/10 rounded-full mix-blend-screen filter blur-[128px] opacity-50 animate-blob animation-delay-4000"></div>
+          <div className="absolute top-[-15%] left-[-10%] w-[50rem] h-[50rem] bg-brand-lavender/30 rounded-full mix-blend-screen filter blur-[100px] opacity-100 animate-blob"></div>
+          <div className="absolute top-[20%] right-[-10%] w-[45rem] h-[45rem] bg-indigo-500/20 rounded-full mix-blend-screen filter blur-[100px] opacity-90 animate-blob animation-delay-2000"></div>
+          <div className="absolute bottom-[-20%] left-[10%] w-[60rem] h-[60rem] bg-purple-600/20 rounded-full mix-blend-screen filter blur-[100px] opacity-100 animate-blob animation-delay-4000"></div>
         </div>
       )}
 
@@ -66,8 +66,8 @@ const Dashboard = () => {
       <main className="flex-1 flex flex-col h-full overflow-hidden relative z-10 bg-transparent">
         
         {/* Header (Top bar) */}
-        <header className={`shrink-0 h-16 px-4 flex items-center justify-between border-b z-10 transition-colors backdrop-blur-xl ${
-          isDarkMode ? 'bg-[#0a0a0c]/80 border-slate-800/60' : 'bg-white/90 border-slate-100 shadow-sm'
+        <header className={`shrink-0 h-16 px-4 flex items-center justify-between border-b z-10 transition-colors backdrop-blur-2xl ${
+          isDarkMode ? 'bg-[#0a0a0c]/40 border-white/5' : 'bg-white/60 border-slate-200/50 shadow-sm'
         }`}>
           <div className="flex items-center gap-3">
             <button 
