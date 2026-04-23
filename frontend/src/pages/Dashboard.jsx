@@ -37,9 +37,9 @@ const Dashboard = () => {
       {/* Background Animado Premium (Bolhas Lilás e Roxas) */}
       {isDarkMode && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-          <div className="absolute top-[-15%] left-[-10%] w-[50rem] h-[50rem] bg-brand-lavender/30 rounded-full mix-blend-screen filter blur-[100px] opacity-100 animate-blob"></div>
-          <div className="absolute top-[20%] right-[-10%] w-[45rem] h-[45rem] bg-indigo-500/20 rounded-full mix-blend-screen filter blur-[100px] opacity-90 animate-blob animation-delay-2000"></div>
-          <div className="absolute bottom-[-20%] left-[10%] w-[60rem] h-[60rem] bg-purple-600/20 rounded-full mix-blend-screen filter blur-[100px] opacity-100 animate-blob animation-delay-4000"></div>
+          <div className="absolute top-[-15%] left-[-10%] w-[50rem] h-[50rem] bg-[#8a2be2]/40 rounded-full mix-blend-screen filter blur-[100px] opacity-100 animate-blob"></div>
+          <div className="absolute top-[20%] right-[-10%] w-[45rem] h-[45rem] bg-[#4f46e5]/30 rounded-full mix-blend-screen filter blur-[100px] opacity-90 animate-blob animation-delay-2000"></div>
+          <div className="absolute bottom-[-20%] left-[10%] w-[60rem] h-[60rem] bg-[#c026d3]/30 rounded-full mix-blend-screen filter blur-[100px] opacity-100 animate-blob animation-delay-4000"></div>
         </div>
       )}
 
