@@ -65,14 +65,14 @@ const Sidebar = ({ activeContext, setActiveContext, isOpen, isDarkMode }) => {
   return (
     <aside
       className={`
-        fixed lg:sticky top-0 left-0 h-screen z-30 flex flex-col
-        bg-[#0a0a0c]/70 backdrop-blur-2xl border-r border-[#1f1f23]/50
+        fixed lg:sticky top-0 left-0 h-screen z-30 flex flex-col border-r
+        ${isDarkMode ? 'bg-[#0a0a0c]/70 backdrop-blur-2xl border-[#1f1f23]/50' : 'bg-white/80 backdrop-blur-2xl border-slate-200/50'}
         transition-all duration-300 ease-in-out shrink-0
         ${isOpen ? 'w-64 translate-x-0' : 'w-0 -translate-x-full lg:w-0 lg:translate-x-0 overflow-hidden'}
       `}
     >
       {/* Logo */}
-      <div className="px-6 pt-6 pb-4 shrink-0 border-b border-white/5">
+      <div className={`px-6 pt-6 pb-4 shrink-0 border-b ${isDarkMode ? 'border-white/5' : 'border-slate-100'}`}>
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-brand-teal to-brand-lavender flex items-center justify-center shrink-0">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
@@ -80,8 +80,8 @@ const Sidebar = ({ activeContext, setActiveContext, isOpen, isDarkMode }) => {
             </svg>
           </div>
           <div>
-            <p className="text-white font-display font-semibold text-sm leading-none">Equilibrium</p>
-            <p className="text-slate-500 text-[10px] mt-0.5 tracking-wide uppercase">Decisão Inteligente</p>
+            <p className={`font-display font-semibold text-sm leading-none ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Equilibrium</p>
+            <p className={`text-[10px] mt-0.5 tracking-wide uppercase ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>Decisão Inteligente</p>
           </div>
         </div>
       </div>
@@ -101,11 +101,14 @@ const Sidebar = ({ activeContext, setActiveContext, isOpen, isDarkMode }) => {
                     key={item.id}
                     onClick={() => setActiveContext(item.id)}
                     className={`
-                      sidebar-item
-                      ${active ? 'sidebar-item-active' : 'sidebar-item-inactive'}
+                      sidebar-item font-medium
+                      ${isDarkMode 
+                        ? (active ? 'bg-white/10 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-white/5')
+                        : (active ? 'bg-slate-100 text-slate-900' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50')
+                      }
                     `}
                   >
-                    <span className={`shrink-0 ${active ? 'text-brand-teal' : 'text-slate-600'}`}>
+                    <span className={`shrink-0 ${active ? 'text-brand-teal' : (isDarkMode ? 'text-slate-600' : 'text-slate-400')}`}>
                       <Icon d={icons[item.id] || icons.geral} size={15} />
                     </span>
                     <span className="text-[12.5px] truncate">{item.label}</span>
@@ -121,13 +124,13 @@ const Sidebar = ({ activeContext, setActiveContext, isOpen, isDarkMode }) => {
       </nav>
 
       {/* Upgrade CTA */}
-      <div className="px-3 py-4 shrink-0 border-t border-white/5">
-        <div className="rounded-xl bg-gradient-to-br from-brand-lavender/20 to-brand-teal/10 border border-brand-lavender/20 p-4">
+      <div className={`px-3 py-4 shrink-0 border-t ${isDarkMode ? 'border-white/5' : 'border-slate-100'}`}>
+        <div className={`rounded-xl border p-4 ${isDarkMode ? 'bg-gradient-to-br from-brand-lavender/20 to-brand-teal/10 border-brand-lavender/20' : 'bg-slate-50 border-slate-200'}`}>
           <div className="flex items-center gap-2 mb-2">
             <Icon d={icons.star} size={13} />
-            <span className="text-white text-[11px] font-medium">Equilibrium Pro</span>
+            <span className={`text-[11px] font-medium ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>Equilibrium Pro</span>
           </div>
-          <p className="text-slate-400 text-[10px] mb-3 leading-relaxed">
+          <p className={`text-[10px] mb-3 leading-relaxed ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
             Consultas ilimitadas, histórico completo e técnicas exclusivas.
           </p>
           <button className="w-full bg-gradient-to-r from-brand-teal to-brand-lavender text-white text-[11px] font-medium py-2 rounded-lg hover:opacity-90 transition-opacity">
