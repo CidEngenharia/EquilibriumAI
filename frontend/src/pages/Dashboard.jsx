@@ -32,7 +32,7 @@ const Dashboard = () => {
   }, [isDarkMode]);
 
   return (
-    <div className={`flex h-screen overflow-hidden ${isDarkMode ? 'dark bg-antigravity-base text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
+    <div className={`flex h-screen overflow-hidden ${isDarkMode ? 'dark bg-[#0a0a0c] text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
       
       {/* Sidebar Mobile Overlay */}
       {isSidebarOpen && (
@@ -58,7 +58,7 @@ const Dashboard = () => {
         
         {/* Header (Top bar) */}
         <header className={`shrink-0 h-16 px-4 flex items-center justify-between border-b z-10 transition-colors ${
-          isDarkMode ? 'bg-antigravity-base border-antigravity-border' : 'bg-white border-slate-100 shadow-sm'
+          isDarkMode ? 'bg-[#0a0a0c] border-slate-800' : 'bg-white border-slate-100 shadow-sm'
         }`}>
           <div className="flex items-center gap-3">
             <button 
@@ -79,7 +79,7 @@ const Dashboard = () => {
               onClick={toggleTheme}
               className={`p-2 rounded-xl transition-all ${
                 isDarkMode 
-                  ? 'bg-antigravity-panel text-amber-400 hover:bg-antigravity-border' 
+                  ? 'bg-slate-800 text-amber-400 hover:bg-slate-700' 
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
@@ -103,7 +103,7 @@ const Dashboard = () => {
             </button>
             <div className={`w-9 h-9 rounded-full flex items-center justify-center font-medium text-sm border-2 ${
               isDarkMode 
-                ? 'bg-antigravity-panel border-antigravity-border text-brand-teal' 
+                ? 'bg-slate-800 border-slate-700 text-brand-teal' 
                 : 'bg-slate-50 border-white text-brand-teal shadow-sm'
             }`}>
               US
@@ -112,7 +112,7 @@ const Dashboard = () => {
         </header>
 
         {/* Content Area */}
-        <div className={`flex-1 overflow-hidden relative ${isDarkMode ? 'bg-antigravity-base' : 'bg-slate-50'}`}>
+        <div className={`flex-1 overflow-hidden relative ${isDarkMode ? 'bg-[#0a0a0c]' : 'bg-slate-50'}`}>
           {activeContext === 'ikigai' ? (
             <div className="h-full overflow-y-auto p-6 md:p-8">
               <IkigaiDiagram isDarkMode={isDarkMode} />

@@ -64,7 +64,7 @@ const DetailedScoreBar = ({ text }) => {
             <span>{item.label}</span>
             <span className="text-brand-teal font-bold">{item.score}/10</span>
           </div>
-          <div className="h-1.5 bg-slate-200 dark:bg-antigravity-base rounded-full overflow-hidden">
+          <div className="h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
             <div
               className="h-full rounded-full bg-gradient-to-r from-brand-teal to-brand-lavender transition-all duration-700"
               style={{ width: `${item.score * 10}%` }}
@@ -251,7 +251,7 @@ const Chat = ({ context, isDarkMode }) => {
                 onClick={() => handleSuggestion(s)}
                 className={`text-xs px-3 py-1.5 rounded-full border transition-all hover:scale-[1.02] active:scale-95 ${
                   isDarkMode
-                    ? 'border-antigravity-border text-slate-300 hover:border-brand-teal/50 hover:text-brand-teal bg-antigravity-panel'
+                    ? 'bg-slate-800 border-slate-700 text-slate-300 hover:border-brand-teal/50 hover:text-brand-teal'
                     : 'border-slate-200 text-slate-500 hover:border-brand-teal/50 hover:text-brand-teal bg-white'
                 }`}
               >
@@ -292,10 +292,10 @@ const Chat = ({ context, isDarkMode }) => {
       </div>
 
       {/* Input area */}
-      <div className={`px-4 pb-4 pt-2 border-t shrink-0 ${isDarkMode ? 'border-antigravity-border bg-antigravity-base' : 'border-slate-100 bg-slate-50'}`}>
+      <div className={`px-4 pb-4 pt-2 border-t shrink-0 ${isDarkMode ? 'border-slate-800 bg-slate-950' : 'border-slate-100 bg-slate-50'}`}>
         <div className={`flex items-end gap-3 rounded-2xl border px-4 py-3 transition-all ${
           isDarkMode
-            ? 'bg-antigravity-input border-antigravity-border focus-within:border-brand-teal/50'
+            ? 'bg-slate-900 border-slate-800 focus-within:border-brand-teal/50'
             : 'bg-white border-slate-200 shadow-sm focus-within:border-brand-teal/50 focus-within:shadow-brand-teal/10'
         }`}>
           <textarea
