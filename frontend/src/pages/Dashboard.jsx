@@ -32,8 +32,17 @@ const Dashboard = () => {
   }, [isDarkMode]);
 
   return (
-    <div className={`flex h-screen overflow-hidden ${isDarkMode ? 'dark bg-[#0a0a0c] text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
+    <div className={`flex h-screen overflow-hidden relative ${isDarkMode ? 'dark bg-[#0a0a0c] text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
       
+      {/* Background Animado Premium (Bolhas Lilás e Roxas) */}
+      {isDarkMode && (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+          <div className="absolute top-[-10%] left-[-10%] w-[40rem] h-[40rem] bg-brand-lavender/10 rounded-full mix-blend-screen filter blur-[128px] opacity-70 animate-blob"></div>
+          <div className="absolute top-[30%] right-[-10%] w-[35rem] h-[35rem] bg-indigo-500/10 rounded-full mix-blend-screen filter blur-[128px] opacity-60 animate-blob animation-delay-2000"></div>
+          <div className="absolute bottom-[-20%] left-[20%] w-[45rem] h-[45rem] bg-purple-600/10 rounded-full mix-blend-screen filter blur-[128px] opacity-50 animate-blob animation-delay-4000"></div>
+        </div>
+      )}
+
       {/* Sidebar Mobile Overlay */}
       {isSidebarOpen && (
         <div 
@@ -54,11 +63,11 @@ const Dashboard = () => {
       />
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col h-full overflow-hidden relative">
+      <main className="flex-1 flex flex-col h-full overflow-hidden relative z-10 bg-transparent">
         
         {/* Header (Top bar) */}
-        <header className={`shrink-0 h-16 px-4 flex items-center justify-between border-b z-10 transition-colors ${
-          isDarkMode ? 'bg-[#0a0a0c] border-slate-800' : 'bg-white border-slate-100 shadow-sm'
+        <header className={`shrink-0 h-16 px-4 flex items-center justify-between border-b z-10 transition-colors backdrop-blur-xl ${
+          isDarkMode ? 'bg-[#0a0a0c]/80 border-slate-800/60' : 'bg-white/90 border-slate-100 shadow-sm'
         }`}>
           <div className="flex items-center gap-3">
             <button 
@@ -112,7 +121,7 @@ const Dashboard = () => {
         </header>
 
         {/* Content Area */}
-        <div className={`flex-1 overflow-hidden relative ${isDarkMode ? 'bg-[#0a0a0c]' : 'bg-slate-50'}`}>
+        <div className={`flex-1 overflow-hidden relative ${isDarkMode ? 'bg-transparent' : 'bg-slate-50'}`}>
           {activeContext === 'ikigai' ? (
             <div className="h-full overflow-y-auto p-6 md:p-8">
               <IkigaiDiagram isDarkMode={isDarkMode} />
