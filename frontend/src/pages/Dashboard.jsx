@@ -37,9 +37,9 @@ const Dashboard = () => {
       {/* Background Animado Premium (Bolhas Lilás e Roxas) */}
       {isDarkMode && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-          <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-[#6b21a8]/10 rounded-full filter blur-[150px] opacity-40 animate-blob"></div>
-          <div className="absolute top-[10%] right-[-20%] w-[60vw] h-[60vw] bg-[#4c1d95]/20 rounded-full filter blur-[180px] opacity-50 animate-blob animation-delay-2000"></div>
-          <div className="absolute bottom-[-20%] left-[10%] w-[70vw] h-[70vw] bg-[#312e81]/20 rounded-full filter blur-[150px] opacity-40 animate-blob animation-delay-4000"></div>
+          <div className="absolute top-[-5%] left-[-5%] w-[35rem] h-[35rem] bg-[#3b0764]/40 rounded-full filter blur-[100px] opacity-70 animate-blob"></div>
+          <div className="absolute top-[10%] right-[-10%] w-[50rem] h-[50rem] bg-[#2e1065]/50 rounded-full filter blur-[120px] opacity-80 animate-blob animation-delay-2000"></div>
+          <div className="absolute bottom-[-10%] left-[15%] w-[55rem] h-[55rem] bg-[#1e1b4b]/60 rounded-full filter blur-[120px] opacity-70 animate-blob animation-delay-4000"></div>
         </div>
       )}
 
