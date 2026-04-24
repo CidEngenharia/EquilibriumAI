@@ -118,22 +118,21 @@ const StructuredMessage = ({ text, isDarkMode }) => {
 // ── Mensagem individual ─────────────────────────────────────────
 const Message = ({ msg, isDarkMode }) => {
   const isUser = msg.role === 'user';
+  
+  // Estilo WhatsApp com Glassmorphism
+  const userStyle = isDarkMode 
+    ? 'bg-[#005c4b]/80 backdrop-blur-md text-slate-100 rounded-tr-sm border border-white/5 shadow-sm' 
+    : 'bg-[#dcf8c6]/90 backdrop-blur-md text-slate-900 rounded-tr-sm border border-white/40 shadow-sm';
+    
+  const agentStyle = isDarkMode
+    ? 'bg-[#202c33]/80 backdrop-blur-md text-slate-200 rounded-tl-sm border border-white/5 shadow-sm'
+    : 'bg-white/90 backdrop-blur-md text-slate-800 rounded-tl-sm border border-white/40 shadow-sm';
+
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} animate-fade-in`}>
-      {!isUser && (
-        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-brand-teal to-brand-lavender flex items-center justify-center shrink-0 mr-2 mt-0.5">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-          </svg>
-        </div>
-      )}
-      <div className={`message-bubble ${isUser
-        ? 'message-user'
-        : isDarkMode ? 'message-ai-dark' : 'message-ai-light'
-      }`}
-      >
+      <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${isUser ? userStyle : agentStyle}`}>
         {isUser ? (
-          <p className="text-sm leading-relaxed">{msg.content}</p>
+          <p className="leading-relaxed">{msg.content}</p>
         ) : (
           <StructuredMessage text={msg.content} isDarkMode={isDarkMode} />
         )}
@@ -232,13 +231,8 @@ const Chat = ({ context, isDarkMode }) => {
 
         {/* Mensagem de boas-vindas */}
         <div className="flex justify-start animate-fade-in">
-          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-brand-teal to-brand-lavender flex items-center justify-center shrink-0 mr-2 mt-0.5">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-            </svg>
-          </div>
-          <div className={`message-bubble ${isDarkMode ? 'message-ai-dark' : 'message-ai-light'}`}>
-            <p className="text-sm leading-relaxed">{welcome}</p>
+          <div className={`max-w-[80%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm leading-relaxed shadow-sm backdrop-blur-md ${isDarkMode ? 'bg-[#202c33]/80 text-slate-200 border border-white/5' : 'bg-white/90 text-slate-800 border border-white/40'}`}>
+            <p className="leading-relaxed">{welcome}</p>
           </div>
         </div>
 
@@ -269,12 +263,9 @@ const Chat = ({ context, isDarkMode }) => {
         {/* Loading */}
         {isLoading && (
           <div className="flex justify-start">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-brand-teal to-brand-lavender flex items-center justify-center shrink-0 mr-2 mt-0.5">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-              </svg>
+            <div className={`rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm backdrop-blur-md border animate-fade-in ${isDarkMode ? 'bg-[#202c33]/80 border-white/5' : 'bg-white/90 border-white/40'}`}>
+              <LoadingDots isDarkMode={isDarkMode} />
             </div>
-            <LoadingDots isDarkMode={isDarkMode} />
           </div>
         )}
 
@@ -313,10 +304,10 @@ const Chat = ({ context, isDarkMode }) => {
           <button
             onClick={handleSend}
             disabled={isLoading || !input.trim()}
-            className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all active:scale-90 ${
+            className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all active:scale-90 ${
               isLoading || !input.trim()
-                ? 'bg-slate-200 text-slate-400 dark:bg-antigravity-panel dark:text-slate-500 cursor-not-allowed'
-                : 'bg-gradient-to-br from-brand-teal to-brand-lavender text-white hover:opacity-90 shadow-md'
+                ? 'bg-slate-200 text-slate-400 dark:bg-slate-800 dark:text-slate-500 cursor-not-allowed'
+                : 'bg-[#25D366] text-white hover:bg-[#128C7E] shadow-md'
             }`}
           >
             {isLoading ? (
