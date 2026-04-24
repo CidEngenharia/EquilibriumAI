@@ -1,173 +1,181 @@
-import React, { useState, useEffect } from 'react';
-import Sidebar, { MenuIcon } from '../components/Sidebar.jsx';
+import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Zap, History, Settings, TrendingUp, Brain, Clock, ChevronRight } from 'lucide-react';
+import Topbar from '../components/Topbar.jsx';
+import DecisionWizard from '../components/DecisionWizard.jsx';
+import HistoryPage from './HistoryPage.jsx';
 import Chat from '../components/Chat.jsx';
-import IkigaiDiagram from '../components/IkigaiDiagram.jsx';
+import { useApp, SCREENS } from '../context/AppContext.jsx';
 
-const Dashboard = () => {
-  const [activeContext, setActiveContext] = useState('geral');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [language, setLanguage] = useState('pt');
+// ── Dashboard Home ──────────────────────────────────────────────────────────
+const DashboardHome = ({ isDarkMode }) => {
+  const { navigate, history } = useApp();
 
-  const languages = {
-    pt: { flag: 'https://flagcdn.com/w40/br.png', code: 'PT' },
-    en: { flag: 'https://flagcdn.com/w40/us.png', code: 'EN' },
-    es: { flag: 'https://flagcdn.com/w40/es.png', code: 'ES' }
-  };
-
-  // Fecha sidebar ao selecionar item no mobile
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 1024) setIsSidebarOpen(true);
-      else setIsSidebarOpen(false);
-    };
-    window.addEventListener('resize', handleResize);
-    handleResize(); // init
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-  const toggleTheme = () => setIsDarkMode(!isDarkMode);
-
-  // Applica classe dark no HTML global se necessário (opcional)
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isDarkMode]);
+  const stats = [
+    { label: 'Análises feitas', value: history.length, icon: TrendingUp, color: 'text-brand-teal' },
+    { label: 'Motor de decisão', value: 'Ativo', icon: Brain, color: 'text-brand-purple' },
+    { label: 'Tempo médio', value: '~30s', icon: Clock, color: 'text-decision-gold' },
+  ];
 
   return (
-    <div className={`flex h-screen overflow-hidden relative ${isDarkMode ? 'dark bg-[#0a0a0c] text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
-      
-      {/* Background Animado Premium (Bolhas Lilás e Roxas) */}
-      {isDarkMode && (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-          <div className="absolute top-[-5%] left-[-5%] w-[35rem] h-[35rem] bg-[#064e3b]/40 rounded-full filter blur-[100px] opacity-70 animate-blob"></div>
-          <div className="absolute top-[10%] right-[-10%] w-[50rem] h-[50rem] bg-[#2e1065]/50 rounded-full filter blur-[120px] opacity-80 animate-blob animation-delay-2000"></div>
-          <div className="absolute bottom-[-10%] left-[15%] w-[55rem] h-[55rem] bg-[#022c22]/60 rounded-full filter blur-[120px] opacity-70 animate-blob animation-delay-4000"></div>
-        </div>
-      )}
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8 max-w-2xl mx-auto w-full">
+      {/* Hero */}
+      <div className="text-center space-y-3 py-4">
+        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.1 }}>
+          <h1 className={`text-2xl font-display font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+            Bom dia, usuário 👋
+          </h1>
+          <p className={`text-sm mt-2 ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+            O EquilibriumAI está pronto para analisar sua próxima decisão.
+          </p>
+        </motion.div>
+      </div>
 
-      {/* Sidebar Mobile Overlay */}
-      {isSidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-20 lg:hidden animate-fade-in"
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
+      {/* Stats */}
+      <div className="grid grid-cols-3 gap-3">
+        {stats.map(({ label, value, icon: Icon, color }, idx) => (
+          <motion.div key={label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + idx * 0.08 }}
+            className={`rounded-2xl border p-4 text-center ${isDarkMode ? 'bg-antigravity-panel border-antigravity-border' : 'bg-white border-slate-200 shadow-card-light'}`}>
+            <Icon size={18} className={`${color} mx-auto mb-2`} />
+            <p className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{value}</p>
+            <p className={`text-[10px] ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{label}</p>
+          </motion.div>
+        ))}
+      </div>
 
-      {/* Sidebar */}
-      <Sidebar 
-        activeContext={activeContext} 
-        setActiveContext={(ctx) => {
-          setActiveContext(ctx);
-          if (window.innerWidth < 1024) setIsSidebarOpen(false);
-        }}
-        isOpen={isSidebarOpen}
-        isDarkMode={isDarkMode}
-      />
-
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col h-full overflow-hidden relative z-10 bg-transparent">
-        
-        {/* Header (Top bar) */}
-        <header className={`shrink-0 h-16 px-4 flex items-center justify-between border-b z-10 transition-colors backdrop-blur-2xl ${
-          isDarkMode ? 'bg-[#0a0a0c]/40 border-white/5' : 'bg-white/60 border-slate-200/50 shadow-sm'
-        }`}>
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={toggleSidebar}
-              className={`p-2 -ml-2 rounded-lg lg:hidden transition-colors ${
-                isDarkMode ? 'hover:bg-antigravity-panel text-slate-300' : 'hover:bg-slate-100 text-slate-600'
-              }`}
-            >
-              <MenuIcon />
-            </button>
-            <h1 className="font-display font-semibold text-lg">
-              {activeContext === 'ikigai' ? 'Mapa Ikigai' : 'Assistente de Decisão'}
-            </h1>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {/* Language Switcher */}
-            <div className="relative group">
-              <button className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all ${
-                isDarkMode ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}>
-                <img src={languages[language].flag} alt={language} className="w-5 h-auto rounded-sm" />
-                <span className="text-xs font-bold">{languages[language].code}</span>
-              </button>
-              
-              <div className={`absolute right-0 top-full mt-2 w-32 py-2 rounded-xl border shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 backdrop-blur-xl ${
-                isDarkMode ? 'bg-[#1a1a1c]/90 border-white/5' : 'bg-white/90 border-slate-100'
-              }`}>
-                {Object.entries(languages).map(([key, { flag, code }]) => (
-                  <button
-                    key={key}
-                    onClick={() => setLanguage(key)}
-                    className={`w-full flex items-center gap-3 px-4 py-2 text-sm transition-colors ${
-                      isDarkMode ? 'hover:bg-white/5 text-slate-300' : 'hover:bg-slate-50 text-slate-600'
-                    } ${language === key ? (isDarkMode ? 'text-brand-teal' : 'text-brand-teal font-bold') : ''}`}
-                  >
-                    <img src={flag} alt={code} className="w-5 h-auto rounded-sm" />
-                    <span className="font-medium">{code}</span>
-                  </button>
-                ))}
-              </div>
+      {/* CTA principal */}
+      <motion.button
+        whileHover={{ scale: 1.01, y: -2 }}
+        whileTap={{ scale: 0.98 }}
+        onClick={() => navigate(SCREENS.DECISION)}
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className={`w-full rounded-2xl border p-6 text-left transition-all group ${
+          isDarkMode
+            ? 'bg-gradient-to-br from-brand-purple/20 to-brand-teal/10 border-brand-purple/30 hover:border-brand-purple/50'
+            : 'bg-gradient-to-br from-brand-purple/5 to-brand-teal/5 border-brand-purple/20 hover:border-brand-purple/40'
+        }`}
+        style={isDarkMode ? { boxShadow: '0 0 30px rgba(168,85,247,0.1)' } : {}}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-brand-purple/20 border border-brand-purple/30 flex items-center justify-center">
+              <Zap size={22} className="text-brand-purple" />
             </div>
-
-            <button
-              onClick={toggleTheme}
-              className={`p-2 rounded-xl transition-all ${
-                isDarkMode 
-                  ? 'bg-slate-800 text-amber-400 hover:bg-slate-700' 
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}
-            >
-              {isDarkMode ? (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="5" />
-                  <line x1="12" y1="1" x2="12" y2="3" />
-                  <line x1="12" y1="21" x2="12" y2="23" />
-                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                  <line x1="1" y1="12" x2="3" y2="12" />
-                  <line x1="21" y1="12" x2="23" y2="12" />
-                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-                </svg>
-              ) : (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                </svg>
-              )}
-            </button>
-            <div className={`w-9 h-9 rounded-full flex items-center justify-center border-2 ${
-              isDarkMode 
-                ? 'bg-slate-800 border-slate-700 text-slate-400' 
-                : 'bg-slate-50 border-white text-slate-400 shadow-sm'
-            }`}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
-              </svg>
+            <div>
+              <p className={`font-semibold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Nova análise de decisão</p>
+              <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>Motor IA com 8 estratégias • Resultado em 30s</p>
             </div>
           </div>
-        </header>
-
-        {/* Content Area */}
-        <div className={`flex-1 overflow-hidden relative ${isDarkMode ? 'bg-transparent' : 'bg-slate-50'}`}>
-          {activeContext === 'ikigai' ? (
-            <div className="h-full overflow-y-auto p-6 md:p-8">
-              <IkigaiDiagram isDarkMode={isDarkMode} />
-            </div>
-          ) : (
-            <Chat key={activeContext} context={activeContext} isDarkMode={isDarkMode} />
-          )}
+          <ChevronRight size={20} className={`transition-transform group-hover:translate-x-1 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`} />
         </div>
-      </main>
-    </div>
+      </motion.button>
+
+      {/* Histórico recente */}
+      {history.length > 0 && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
+          <div className="flex items-center justify-between mb-3">
+            <p className={`text-xs font-medium uppercase tracking-wider ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>Decisões recentes</p>
+            <button onClick={() => navigate(SCREENS.HISTORY)} className="text-[11px] text-brand-purple hover:underline">Ver todas</button>
+          </div>
+          <div className="space-y-2">
+            {history.slice(0, 2).map((item) => {
+              const top = item.resultados?.[0];
+              return (
+                <div key={item.id} className={`rounded-xl border px-4 py-3 flex items-center gap-3 ${isDarkMode ? 'bg-antigravity-panel border-antigravity-border' : 'bg-white border-slate-200'}`}>
+                  <div className="w-8 h-8 rounded-lg bg-brand-purple/10 flex items-center justify-center shrink-0">
+                    <TrendingUp size={14} className="text-brand-purple" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-sm font-medium truncate ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>{top?.nome}</p>
+                    <p className={`text-[10px] ${isDarkMode ? 'text-slate-600' : 'text-slate-400'}`}>{item.timestamp}</p>
+                  </div>
+                  <span className={`text-[11px] font-semibold ${isDarkMode ? 'text-brand-teal' : 'text-brand-teal-dark'}`}>{top?.scorePercent}/100</span>
+                </div>
+              );
+            })}
+          </div>
+        </motion.div>
+      )}
+
+      {/* Assistente de chat (contexto geral) */}
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
+        <p className={`text-xs font-medium uppercase tracking-wider mb-3 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>Assistente de sabedoria</p>
+        <div className={`rounded-2xl overflow-hidden border ${isDarkMode ? 'border-antigravity-border' : 'border-slate-200'}`} style={{ height: '380px' }}>
+          <Chat context="geral" isDarkMode={isDarkMode} />
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+// ── Settings Page ───────────────────────────────────────────────────────────
+const SettingsPage = ({ isDarkMode }) => {
+  const { toggleDarkMode } = useApp();
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-xl mx-auto w-full space-y-4">
+      <div className={`rounded-2xl border p-5 ${isDarkMode ? 'bg-antigravity-panel border-antigravity-border' : 'bg-white border-slate-200'}`}>
+        <h3 className={`text-sm font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Aparência</h3>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className={`text-sm ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>Modo escuro</p>
+            <p className={`text-[11px] ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>Alterna entre tema claro e escuro</p>
+          </div>
+          <button onClick={toggleDarkMode} className={`w-11 h-6 rounded-full transition-colors ${isDarkMode ? 'bg-brand-purple' : 'bg-slate-200'} relative`}>
+            <div className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-all ${isDarkMode ? 'left-6' : 'left-1'}`} />
+          </button>
+        </div>
+      </div>
+      <div className={`rounded-2xl border p-5 ${isDarkMode ? 'bg-antigravity-panel border-antigravity-border' : 'bg-white border-slate-200'}`}>
+        <h3 className={`text-sm font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Sobre</h3>
+        <p className={`text-xs leading-relaxed ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+          EquilibriumAI v2.0 — Motor de decisão inteligente com análise de perfil, scoring ponderado e simulação de cenários.
+        </p>
+      </div>
+    </motion.div>
+  );
+};
+
+// ── Main Dashboard ──────────────────────────────────────────────────────────
+const SCREEN_TITLES = {
+  [SCREENS.DASHBOARD]: 'Dashboard',
+  [SCREENS.DECISION]:  'Nova Decisão',
+  [SCREENS.HISTORY]:   'Histórico',
+  [SCREENS.SETTINGS]:  'Configurações',
+};
+
+const Dashboard = () => {
+  const { activeScreen, isDarkMode } = useApp();
+
+  const renderContent = () => {
+    switch (activeScreen) {
+      case SCREENS.DECISION:  return <DecisionWizard isDarkMode={isDarkMode} />;
+      case SCREENS.HISTORY:   return <HistoryPage isDarkMode={isDarkMode} />;
+      case SCREENS.SETTINGS:  return <SettingsPage isDarkMode={isDarkMode} />;
+      default:                return <DashboardHome isDarkMode={isDarkMode} />;
+    }
+  };
+
+  return (
+    <main className="flex-1 flex flex-col h-full overflow-hidden relative z-10">
+      <Topbar title={SCREEN_TITLES[activeScreen]} />
+      <div className="flex-1 overflow-y-auto scrollbar-thin">
+        <div className="px-4 lg:px-6 py-6">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeScreen}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+            >
+              {renderContent()}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
+    </main>
   );
 };
 

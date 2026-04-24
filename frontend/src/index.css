@@ -4,8 +4,7 @@
 
 @layer base {
   *, *::before, *::after { box-sizing: border-box; }
-
-  html { height: 100%; }
+  html { height: 100%; scroll-behavior: smooth; }
 
   body {
     font-family: 'Inter', system-ui, sans-serif;
@@ -19,16 +18,22 @@
 }
 
 @layer components {
+  /* ── Sidebar items ─────────────────────────────────────── */
   .sidebar-item {
-    @apply flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-all duration-200 cursor-pointer w-full text-left;
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] transition-all duration-200 cursor-pointer w-full text-left relative overflow-hidden;
   }
   .sidebar-item-active {
-    @apply bg-white/10 text-white font-medium;
+    @apply bg-white/10 text-white border-l-2 border-brand-purple;
+    box-shadow: inset 0 0 20px rgba(168,85,247,0.08);
   }
   .sidebar-item-inactive {
-    @apply text-slate-400 hover:text-slate-200 hover:bg-white/5;
+    @apply text-slate-400 hover:text-slate-200 hover:bg-white/5 border-l-2 border-transparent;
+  }
+  .sidebar-item-inactive:hover {
+    box-shadow: 0 0 12px rgba(168,85,247,0.1);
   }
 
+  /* ── Message bubbles ──────────────────────────────────── */
   .message-bubble {
     @apply max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed animate-fade-in;
   }
@@ -39,52 +44,125 @@
     @apply bg-white border border-slate-100 text-slate-700 shadow-sm rounded-bl-sm;
   }
   .message-ai-dark {
-    @apply bg-[#252526] border border-[#333333] text-slate-200 rounded-bl-sm;
+    @apply bg-antigravity-panel border border-antigravity-border text-slate-200 rounded-bl-sm;
+  }
+
+  /* ── Glass cards ──────────────────────────────────────── */
+  .glass-dark {
+    background: rgba(22, 22, 34, 0.7);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .glass-light {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+
+  /* ── Decision cards ───────────────────────────────────── */
+  .decision-card {
+    @apply rounded-2xl p-5 transition-all duration-300 cursor-pointer;
+  }
+  .decision-card-dark {
+    @apply bg-antigravity-panel border border-antigravity-border hover:border-brand-purple/40;
+  }
+  .decision-card-dark:hover {
+    box-shadow: 0 0 20px rgba(168,85,247,0.12);
+  }
+  .decision-card-light {
+    @apply bg-white border border-slate-200 hover:border-brand-purple/40 shadow-card-light;
+  }
+
+  /* ── Buttons ──────────────────────────────────────────── */
+  .btn-primary {
+    @apply bg-brand-purple text-white rounded-xl px-5 py-2.5 text-sm transition-all duration-200 active:scale-95;
+  }
+  .btn-primary:hover {
+    background: #9333ea;
+    box-shadow: 0 0 16px rgba(168,85,247,0.3);
+  }
+  .btn-ghost-dark {
+    @apply bg-white/5 border border-white/10 text-slate-300 rounded-xl px-5 py-2.5 text-sm transition-all hover:bg-white/10;
+  }
+  .btn-ghost-light {
+    @apply bg-slate-50 border border-slate-200 text-slate-600 rounded-xl px-5 py-2.5 text-sm transition-all hover:bg-slate-100;
+  }
+
+  /* ── Score bar ────────────────────────────────────────── */
+  .score-bar {
+    @apply h-2 rounded-full overflow-hidden;
+  }
+  .score-bar-fill {
+    @apply h-full rounded-full transition-all duration-700 ease-out;
+    background: linear-gradient(90deg, #8ec6c5, #a855f7);
+  }
+
+  /* ── Wizard step ──────────────────────────────────────── */
+  .wizard-option {
+    @apply rounded-xl border px-4 py-3 text-sm transition-all duration-200 cursor-pointer text-left;
+  }
+  .wizard-option-dark {
+    @apply bg-antigravity-surface border-antigravity-border text-slate-300 hover:border-brand-purple/60 hover:bg-antigravity-panel;
+  }
+  .wizard-option-light {
+    @apply bg-slate-50 border-slate-200 text-slate-700 hover:border-brand-purple/60 hover:bg-white;
+  }
+  .wizard-option-selected-dark {
+    @apply border-brand-purple bg-brand-purple/10 text-white;
+  }
+  .wizard-option-selected-light {
+    @apply border-brand-purple bg-brand-purple/5 text-brand-purple-dark;
   }
 }
 
-/* Animações Premium para o Background (Bolhas) */
+/* ── Animações background ──────────────────────────────── */
 @keyframes blob {
   0% { transform: translate(0px, 0px) scale(1); }
   33% { transform: translate(30px, -40px) scale(1.05); }
   66% { transform: translate(-20px, 20px) scale(0.95); }
   100% { transform: translate(0px, 0px) scale(1); }
 }
+.animate-blob { animation: blob 25s infinite alternate ease-in-out; }
+.animation-delay-2000 { animation-delay: 2s; }
+.animation-delay-4000 { animation-delay: 4s; }
 
-.animate-blob {
-  animation: blob 25s infinite alternate ease-in-out;
-}
-
-.animation-delay-2000 {
-  animation-delay: 2s;
-}
-
-.animation-delay-4000 {
-  animation-delay: 4s;
-}
-
-
-@keyframes glow-pulse {
+@keyframes glow-pulse-bg {
   0% { transform: scale(0.85); opacity: 0.4; }
   50% { transform: scale(1.1); opacity: 0.7; }
   100% { transform: scale(0.85); opacity: 0.4; }
 }
+.animate-glow-pulse { animation: glow-pulse-bg 4s infinite ease-in-out; }
 
-.animate-glow-pulse {
-  animation: glow-pulse 4s infinite ease-in-out;
+/* ── Typing indicator ──────────────────────────────────── */
+@keyframes typing-bounce {
+  0%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-6px); }
 }
+.typing-dot { animation: typing-bounce 1.4s infinite ease-in-out both; }
+.typing-dot:nth-child(1) { animation-delay: 0s; }
+.typing-dot:nth-child(2) { animation-delay: 0.16s; }
+.typing-dot:nth-child(3) { animation-delay: 0.32s; }
 
 @layer utilities {
+  /* Scrollbars */
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-  .scrollbar-thin::-webkit-scrollbar { width: 5px; }
+  .scrollbar-thin::-webkit-scrollbar { width: 4px; }
   .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: #334155;
+    background: #2a2a3e;
     border-radius: 99px;
   }
 
+  /* Delay utilities para stagger */
+  .delay-75  { animation-delay: 75ms; }
+  .delay-150 { animation-delay: 150ms; }
+  .delay-225 { animation-delay: 225ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-450 { animation-delay: 450ms; }
+
+  /* Legacy dot classes (mantém compatibilidade) */
   .dot-1 { animation-delay: 0s; }
   .dot-2 { animation-delay: 0.16s; }
   .dot-3 { animation-delay: 0.32s; }

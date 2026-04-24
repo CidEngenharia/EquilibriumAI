@@ -1,23 +1,19 @@
-import "dotenv/config";
-import express from "express";
-import cors from "cors";
-import chatRoutes from "./routes/chat.js";
+// server.js
+
+const express = require("express");
+const cors = require("cors");
+
+const decisionRoute = require("./routes/decision");
 
 const app = express();
-const PORT = process.env.PORT || 3001;
 
-// Middlewares
 app.use(cors());
 app.use(express.json());
 
-// Rotas
-app.use("/chat", chatRoutes);
+app.use("/api/decision", decisionRoute);
 
-// Health Check
-app.get("/", (req, res) => {
-    res.send("Equilibrium AI Backend is running!");
-});
+const PORT = 3000;
 
 app.listen(PORT, () => {
-    console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
+    console.log(`🚀 Server rodando na porta ${PORT}`);
 });

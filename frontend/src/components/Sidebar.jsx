@@ -1,146 +1,224 @@
 import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  LayoutDashboard, Zap, History, Settings,
+  Star, X, Menu
+} from 'lucide-react';
+import { useApp, SCREENS } from '../context/AppContext.jsx';
 
-// ── Ícones inline ──────────────────────────────────────────────
-const Icon = ({ d, size = 16 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d={d} />
-  </svg>
-);
-
-const MenuIcon = () => <Icon d="M4 6h16M4 12h16M4 18h16" />;
-const icons = {
-  geral:         "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z",
-  psicologia:    "M9.5 2A2.5 2.5 0 0112 4.5v15a2.5 2.5 0 01-4.96.44A2.5 2.5 0 014.08 17a3 3 0 01-.34-5.58A2.5 2.5 0 015.06 7.18 2.5 2.5 0 019.5 2zM14.5 2A2.5 2.5 0 0112 4.5v15a2.5 2.5 0 004.96.44A2.5 2.5 0 0019.92 17a3 3 0 00.34-5.58A2.5 2.5 0 0018.94 7.18 2.5 2.5 0 0014.5 2z",
-  zen:           "M12 3a9 9 0 100 18M12 3a9 9 0 000 18M3.6 9h16.8M3.6 15h16.8",
-  espiritualidade:"M12 2v20M7 7h10",
-  gestao:        "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4",
-  filosofia:     "M12 2a10 10 0 100 20 10 10 0 000-20zM2 12h20",
-  ikigai:        "M12 12m-3 0a3 3 0 106 0 3 3 0 10-6 0M12 2v3M12 19v3M2 12h3M19 12h3",
-  star:          "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z",
-};
-
-// ── Grupos de navegação ─────────────────────────────────────────
-const navGroups = [
+const NAV_GROUPS = [
   {
     label: 'Principal',
     items: [
-      { id: 'geral',          label: 'Agente de Decisão' },
+      { id: SCREENS.DASHBOARD, label: 'Dashboard',      Icon: LayoutDashboard },
+      { id: SCREENS.DECISION,  label: 'Nova Decisão',   Icon: Zap },
     ],
   },
   {
-    label: 'Psicologia & Decisão',
+    label: 'Histórico',
     items: [
-      { id: 'psicologia',     label: 'Vieses & Escolhas' },
-    ],
-  },
-  {
-    label: 'Sabedoria Japonesa',
-    items: [
-      { id: 'zen',            label: 'Ikigai · Kaizen · Wabi-sabi' },
-      { id: 'ikigai',         label: 'Mapa Ikigai' },
-    ],
-  },
-  {
-    label: 'Espírito & Fé',
-    items: [
-      { id: 'espiritualidade', label: 'Princípios do Evangelho' },
-    ],
-  },
-  {
-    label: 'Mentalidade',
-    items: [
-      { id: 'filosofia',      label: 'Estoicismo & Filosofia' },
-    ],
-  },
-  {
-    label: 'Produtividade',
-    items: [
-      { id: 'gestao',         label: 'Métodos de Gestão' },
+      { id: SCREENS.HISTORY,  label: 'Minhas Decisões', Icon: History },
+      { id: SCREENS.SETTINGS, label: 'Configurações',   Icon: Settings },
     ],
   },
 ];
 
-// ── Sidebar ─────────────────────────────────────────────────────
-const Sidebar = ({ activeContext, setActiveContext, isOpen, isDarkMode }) => {
+// ── Menu flutuante ──────────────────────────────────────────────────────────
+const FloatingMenu = () => {
+  const { activeScreen, navigate, isDarkMode, isSidebarOpen, setIsSidebarOpen } = useApp();
+
+  const close = () => setIsSidebarOpen(false);
+  const toggle = () => setIsSidebarOpen(prev => !prev);
+
+  // Variantes de animação do painel
+  const panelVariants = {
+    hidden:  { opacity: 0, scale: 0.92, y: 12 },
+    visible: { opacity: 1, scale: 1,    y: 0   },
+    exit:    { opacity: 0, scale: 0.92, y: 12  },
+  };
+
+  // Variante das linhas do hamburguer → X
+  const topLineVariants    = { closed: { rotate: 0,   y: 0   }, open: { rotate: 45,  y: 6  } };
+  const midLineVariants    = { closed: { opacity: 1,  x: 0   }, open: { opacity: 0,  x: -8 } };
+  const bottomLineVariants = { closed: { rotate: 0,   y: 0   }, open: { rotate: -45, y: -6 } };
+
   return (
-    <aside
-      className={`
-        fixed lg:sticky top-0 left-0 h-screen z-30 flex flex-col border-r
-        ${isDarkMode ? 'bg-[#0a0a0c]/30 backdrop-blur-3xl border-[#1f1f23]/40' : 'bg-white/40 backdrop-blur-3xl border-slate-200/50'}
-        transition-all duration-300 ease-in-out shrink-0
-        ${isOpen ? 'w-64 translate-x-0' : 'w-0 -translate-x-full lg:w-0 lg:translate-x-0 overflow-hidden'}
-      `}
-    >
-      {/* Logo */}
-      <div className={`px-6 pt-6 pb-4 shrink-0 border-b ${isDarkMode ? 'border-white/5' : 'border-slate-100'}`}>
-        <div className="relative flex items-center gap-3 py-1">
-          {/* Efeito de luz pulsante por trás da logo */}
-          <div className={`absolute -left-1 w-16 h-16 rounded-full blur-2xl animate-glow-pulse ${
-            isDarkMode ? 'bg-[#bef264]/40' : 'bg-[#fde047]/50'
-          }`}></div>
-          <img 
-            src="/equilibrium_1.fw.png" 
-            alt="Equilibrium Logo" 
-            className="h-12 w-auto relative z-10"
+    <>
+      {/* Overlay escuro ao abrir */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <motion.div
+            key="overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-[2px]"
+            onClick={close}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Painel flutuante */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <motion.div
+            key="panel"
+            variants={panelVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+            className={`
+              fixed top-20 left-5 z-50 w-64 rounded-2xl border overflow-hidden
+              shadow-[0_20px_60px_rgba(0,0,0,0.5)]
+              ${isDarkMode
+                ? 'bg-antigravity-panel/95 backdrop-blur-2xl border-antigravity-border'
+                : 'bg-white/95 backdrop-blur-2xl border-slate-200'
+              }
+            `}
+          >
+            {/* Logo header */}
+            <div className={`px-4 pt-4 pb-3 flex items-center justify-between border-b ${
+              isDarkMode ? 'border-antigravity-border' : 'border-slate-100'
+            }`}>
+              <div className="flex items-center gap-2.5">
+                <div className={`absolute left-4 w-10 h-10 rounded-full blur-2xl pointer-events-none ${
+                  isDarkMode ? 'bg-brand-purple/40' : 'bg-brand-purple/20'
+                }`} />
+                <img
+                  src="/equilibrium_1.fw.png"
+                  alt="Logo"
+                  className="h-8 w-auto relative z-10"
+                  onError={e => { e.target.style.display = 'none'; }}
+                />
+                <div>
+                  <p className={`text-[11px] font-display font-semibold tracking-wider uppercase leading-tight ${
+                    isDarkMode ? 'text-white' : 'text-slate-800'
+                  }`}>Equilibrium</p>
+                  <p className="text-[9px] text-brand-purple font-medium tracking-widest uppercase">AI</p>
+                </div>
+              </div>
+              <button
+                onClick={close}
+                className={`p-1.5 rounded-lg transition-colors ${
+                  isDarkMode ? 'text-slate-500 hover:text-slate-200 hover:bg-white/8' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'
+                }`}
+              >
+                <X size={15} />
+              </button>
+            </div>
+
+            {/* Nav */}
+            <nav className="px-2.5 py-3 space-y-4">
+              {NAV_GROUPS.map((group, gIdx) => (
+                <div key={group.label}>
+                  <p className={`text-[9px] uppercase tracking-[0.18em] font-medium px-2.5 mb-1.5 ${
+                    isDarkMode ? 'text-slate-600' : 'text-slate-400'
+                  }`}>{group.label}</p>
+                  <div className="space-y-0.5">
+                    {group.items.map(({ id, label, Icon }, idx) => {
+                      const active = activeScreen === id;
+                      return (
+                        <motion.button
+                          key={id}
+                          onClick={() => { navigate(id); close(); }}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: gIdx * 0.06 + idx * 0.05 }}
+                          whileHover={{ x: 3 }}
+                          whileTap={{ scale: 0.97 }}
+                          className={`sidebar-item ${active ? 'sidebar-item-active' : 'sidebar-item-inactive'}`}
+                        >
+                          <Icon
+                            size={15}
+                            className={`shrink-0 ${active ? 'text-brand-purple' : isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}
+                          />
+                          <span className="truncate text-[13px]">{label}</span>
+                          {active && (
+                            <motion.span
+                              layoutId="nav-dot"
+                              className="ml-auto w-1.5 h-1.5 rounded-full bg-brand-purple shrink-0"
+                            />
+                          )}
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </nav>
+
+            {/* CTA Pro */}
+            <div className={`px-2.5 pb-3 border-t pt-3 ${isDarkMode ? 'border-antigravity-border' : 'border-slate-100'}`}>
+              <div className={`rounded-xl border p-3 ${
+                isDarkMode
+                  ? 'bg-gradient-to-br from-brand-purple/20 to-brand-teal/10 border-brand-purple/25'
+                  : 'bg-gradient-to-br from-brand-purple/5 to-brand-teal/5 border-slate-200'
+              }`}>
+                <div className="flex items-center gap-1.5 mb-1.5">
+                  <Star size={12} className="text-decision-gold" />
+                  <span className={`text-[11px] font-medium ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>Equilibrium Pro</span>
+                </div>
+                <p className={`text-[10px] mb-2.5 leading-relaxed ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                  Decisões ilimitadas, histórico e IA exclusiva.
+                </p>
+                <button className="w-full bg-brand-purple text-white text-[11px] font-medium py-1.5 rounded-lg hover:bg-brand-purple-dark transition-all">
+                  Assinar agora
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── FAB: botão hambúrguer flutuante ─────────────────────────────────── */}
+      <motion.button
+        onClick={toggle}
+        whileHover={{ scale: 1.08 }}
+        whileTap={{ scale: 0.92 }}
+        className={`
+          fixed top-5 left-5 z-50 w-12 h-12 rounded-xl
+          flex items-center justify-center
+          transition-colors duration-200
+          ${isDarkMode
+            ? 'bg-antigravity-panel border border-antigravity-border text-white'
+            : 'bg-white border border-slate-200 text-slate-700 shadow-card-light'
+          }
+        `}
+        style={{
+          boxShadow: isSidebarOpen
+            ? '0 0 0 3px rgba(168,85,247,0.4), 0 8px 32px rgba(0,0,0,0.4)'
+            : isDarkMode
+              ? '0 8px 32px rgba(0,0,0,0.5), 0 0 20px rgba(168,85,247,0.15)'
+              : '0 4px 20px rgba(0,0,0,0.12)',
+        }}
+        aria-label="Menu"
+      >
+        {/* Ícone hambúrguer animado → X */}
+        <div className="w-5 h-5 flex flex-col justify-center items-center gap-[5px]">
+          <motion.span
+            variants={topLineVariants}
+            animate={isSidebarOpen ? 'open' : 'closed'}
+            transition={{ duration: 0.25, ease: 'easeInOut' }}
+            className="block w-5 h-[1.5px] bg-current rounded-full origin-center"
+          />
+          <motion.span
+            variants={midLineVariants}
+            animate={isSidebarOpen ? 'open' : 'closed'}
+            transition={{ duration: 0.2 }}
+            className="block w-5 h-[1.5px] bg-current rounded-full"
+          />
+          <motion.span
+            variants={bottomLineVariants}
+            animate={isSidebarOpen ? 'open' : 'closed'}
+            transition={{ duration: 0.25, ease: 'easeInOut' }}
+            className="block w-5 h-[1.5px] bg-current rounded-full origin-center"
           />
         </div>
-      </div>
-
-      {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto scrollbar-thin px-3 py-4 space-y-5">
-        {navGroups.map((group) => (
-          <div key={group.label}>
-            <p className="text-[9px] text-slate-600 uppercase tracking-[0.18em] font-medium px-3 mb-1.5">
-              {group.label}
-            </p>
-            <div className="space-y-0.5">
-              {group.items.map((item) => {
-                const active = activeContext === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => setActiveContext(item.id)}
-                    className={`
-                      sidebar-item font-medium
-                      ${isDarkMode 
-                        ? (active ? 'bg-white/10 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-white/5')
-                        : (active ? 'bg-slate-100 text-slate-900' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50')
-                      }
-                    `}
-                  >
-                    <span className={`shrink-0 ${active ? 'text-brand-teal' : (isDarkMode ? 'text-slate-600' : 'text-slate-400')}`}>
-                      <Icon d={icons[item.id] || icons.geral} size={15} />
-                    </span>
-                    <span className="text-[12.5px] truncate">{item.label}</span>
-                    {active && (
-                      <span className="ml-auto w-1.5 h-1.5 rounded-full bg-brand-teal shrink-0" />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </nav>
-
-      {/* Upgrade CTA */}
-      <div className={`px-3 py-4 shrink-0 border-t ${isDarkMode ? 'border-white/5' : 'border-slate-100'}`}>
-        <div className={`rounded-xl border p-4 ${isDarkMode ? 'bg-gradient-to-br from-brand-lavender/20 to-brand-teal/10 border-brand-lavender/20' : 'bg-slate-50 border-slate-200'}`}>
-          <div className="flex items-center gap-2 mb-2">
-            <Icon d={icons.star} size={13} />
-            <span className={`text-[11px] font-medium ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>Equilibrium Pro</span>
-          </div>
-          <p className={`text-[10px] mb-3 leading-relaxed ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-            Consultas ilimitadas, histórico completo e técnicas exclusivas.
-          </p>
-          <button className="w-full bg-[#a855f7] text-white text-[11px] font-medium py-2 rounded-lg hover:opacity-90 transition-opacity">
-            Assinar agora
-          </button>
-        </div>
-      </div>
-    </aside>
+      </motion.button>
+    </>
   );
 };
 
-export { MenuIcon };
-export default Sidebar;
+export { FloatingMenu as default };
