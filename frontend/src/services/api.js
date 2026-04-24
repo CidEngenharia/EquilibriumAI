@@ -23,7 +23,10 @@ export async function sendMessage(message, context = 'geral', history = []) {
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
-    throw new Error(error.error || `Erro ${response.status} na comunicação com o servidor.`);
+    const message = error.details 
+      ? `${error.error}: ${error.details}` 
+      : (error.error || `Erro ${response.status} na comunicação com o servidor.`);
+    throw new Error(message);
   }
 
   const data = await response.json();

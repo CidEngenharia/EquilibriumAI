@@ -15,7 +15,11 @@ router.post("/", async (req, res) => {
         res.json({ reply });
     } catch (error) {
         console.error("Erro na rota de chat:", error);
-        res.status(500).json({ error: "Erro ao processar sua decisão. Tente novamente mais tarde." });
+        // Retorna o erro real para facilitar o diagnóstico do usuário
+        res.status(500).json({ 
+            error: "Erro ao processar sua decisão.",
+            details: error.message 
+        });
     }
 });
 

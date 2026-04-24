@@ -1,5 +1,7 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
 const API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+const genAI = new GoogleGenerativeAI(API_KEY);
 
 export const generateDecisionResponse = async (userMessage, context = 'geral') => {
     let contextInstruction = "";
@@ -47,29 +49,27 @@ Pergunta do usuário: "${userMessage}"
     `;
 
     try {
-        console.log("Chamando Gemini API (1.5 Flash)...");
-        const response = await fetch(GEMINI_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: {
-                    temperature: 0.7,
-                }
-            }),
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error?.message || "Erro na API do Gemini");
-        }
-
-        const data = await response.json();
-        return data?.candidates?.[0]?.content?.parts?.[0]?.text || "Não consegui processar uma decisão no momento.";
+        console.log("Chamando Gemini via SDK...");
+        // Usando o nome exato que apareceu na lista de modelos disponíveis
+        const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+        
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        return response.text() || "Não consegui processar uma decisão no momento.";
     } catch (error) {
-        console.error("Erro no Gemini Service:", error);
-        throw error;
+        console.error("Erro no Gemini Service (SDK):", error);
+        // Fallback para outro modelo da lista se o primeiro falhar
+        if (error.message.includes("not found") || error.message.includes("quota")) {
+            try {
+                console.log("Tentando fallback para gemini-2.0-flash...");
+                const modelFallback = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+                const result = await modelFallback.generateContent(prompt);
+                const response = await result.response;
+                return response.text();
+            } catch (fallbackError) {
+                throw new Error("DEBUG_VERIFICADO: " + error.message);
+            }
+        }
+        throw new Error("DEBUG_VERIFICADO: " + error.message);
     }
 };

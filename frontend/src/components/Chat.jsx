@@ -47,7 +47,7 @@ function parseStructuredReply(text) {
   return Object.keys(sections).length >= 3 ? sections : null;
 }
 
-const DetailedScoreBar = ({ text }) => {
+const DetailedScoreBar = ({ text, isDarkMode }) => {
   const scores = text.split(',').map(s => {
     const match = s.match(/(.*?):\s*(\d+)\s*\/\s*10/);
     if (match) return { label: match[1].trim(), score: parseInt(match[2], 10) };
@@ -62,11 +62,13 @@ const DetailedScoreBar = ({ text }) => {
         <div key={idx} className="flex flex-col gap-1.5">
           <div className="flex justify-between items-center text-[10px] font-medium uppercase tracking-wider text-slate-500">
             <span>{item.label}</span>
-            <span className="text-brand-teal font-bold">{item.score}/10</span>
+            <span className={`${isDarkMode ? 'text-[#ff4500]' : 'text-orange-600'} font-bold`}>{item.score}/10</span>
           </div>
           <div className="h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-brand-teal to-brand-lavender transition-all duration-700"
+              className={`h-full rounded-full transition-all duration-700 ${
+                isDarkMode ? 'bg-[#ff4500]' : 'bg-orange-500'
+              }`}
               style={{ width: `${item.score * 10}%` }}
             />
           </div>
@@ -93,7 +95,7 @@ const StructuredMessage = ({ text, isDarkMode }) => {
               <span>{label}</span>
             </div>
             {label === 'Score de decisão' ? (
-              <DetailedScoreBar text={value} />
+              <DetailedScoreBar text={value} isDarkMode={isDarkMode} />
             ) : (
               <p className={`text-sm leading-relaxed ${isDarkMode ? 'text-slate-200' : 'text-slate-700'}`}>{value}</p>
             )}
@@ -102,7 +104,7 @@ const StructuredMessage = ({ text, isDarkMode }) => {
       })}
       
       {text.includes('🔗') && (
-        <button className="w-full mt-4 flex items-center justify-center gap-2 bg-gradient-to-r from-brand-teal to-brand-lavender text-white px-4 py-3 rounded-xl text-sm font-semibold hover:opacity-90 transition-all shadow-md active:scale-[0.98]">
+        <button className="w-full mt-4 flex items-center justify-center gap-2 bg-[#a855f7] text-white px-4 py-3 rounded-xl text-sm font-semibold hover:opacity-90 transition-all shadow-md active:scale-[0.98]">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
             <line x1="3" y1="9" x2="21" y2="9"/>

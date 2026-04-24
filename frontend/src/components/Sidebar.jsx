@@ -73,16 +73,16 @@ const Sidebar = ({ activeContext, setActiveContext, isOpen, isDarkMode }) => {
     >
       {/* Logo */}
       <div className={`px-6 pt-6 pb-4 shrink-0 border-b ${isDarkMode ? 'border-white/5' : 'border-slate-100'}`}>
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-brand-teal to-brand-lavender flex items-center justify-center shrink-0">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-            </svg>
-          </div>
-          <div>
-            <p className={`font-display font-semibold text-sm leading-none ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Equilibrium</p>
-            <p className={`text-[10px] mt-0.5 tracking-wide uppercase ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>Decisão Inteligente</p>
-          </div>
+        <div className="relative flex items-center gap-3 py-1">
+          {/* Efeito de luz pulsante por trás da logo */}
+          <div className={`absolute -left-1 w-16 h-16 rounded-full blur-2xl animate-glow-pulse ${
+            isDarkMode ? 'bg-[#bef264]/40' : 'bg-[#fde047]/50'
+          }`}></div>
+          <img 
+            src="/equilibrium_1.fw.png" 
+            alt="Equilibrium Logo" 
+            className="h-12 w-auto relative z-10"
+          />
         </div>
       </div>
 
@@ -133,7 +133,7 @@ const Sidebar = ({ activeContext, setActiveContext, isOpen, isDarkMode }) => {
           <p className={`text-[10px] mb-3 leading-relaxed ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
             Consultas ilimitadas, histórico completo e técnicas exclusivas.
           </p>
-          <button className="w-full bg-gradient-to-r from-brand-teal to-brand-lavender text-white text-[11px] font-medium py-2 rounded-lg hover:opacity-90 transition-opacity">
+          <button className="w-full bg-[#a855f7] text-white text-[11px] font-medium py-2 rounded-lg hover:opacity-90 transition-opacity">
             Assinar agora
           </button>
         </div>

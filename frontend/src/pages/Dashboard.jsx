@@ -7,6 +7,13 @@ const Dashboard = () => {
   const [activeContext, setActiveContext] = useState('geral');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [language, setLanguage] = useState('pt');
+
+  const languages = {
+    pt: { flag: 'https://flagcdn.com/w40/br.png', code: 'PT' },
+    en: { flag: 'https://flagcdn.com/w40/us.png', code: 'EN' },
+    es: { flag: 'https://flagcdn.com/w40/es.png', code: 'ES' }
+  };
 
   // Fecha sidebar ao selecionar item no mobile
   useEffect(() => {
@@ -84,6 +91,33 @@ const Dashboard = () => {
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Language Switcher */}
+            <div className="relative group">
+              <button className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all ${
+                isDarkMode ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}>
+                <img src={languages[language].flag} alt={language} className="w-5 h-auto rounded-sm" />
+                <span className="text-xs font-bold">{languages[language].code}</span>
+              </button>
+              
+              <div className={`absolute right-0 top-full mt-2 w-32 py-2 rounded-xl border shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 backdrop-blur-xl ${
+                isDarkMode ? 'bg-[#1a1a1c]/90 border-white/5' : 'bg-white/90 border-slate-100'
+              }`}>
+                {Object.entries(languages).map(([key, { flag, code }]) => (
+                  <button
+                    key={key}
+                    onClick={() => setLanguage(key)}
+                    className={`w-full flex items-center gap-3 px-4 py-2 text-sm transition-colors ${
+                      isDarkMode ? 'hover:bg-white/5 text-slate-300' : 'hover:bg-slate-50 text-slate-600'
+                    } ${language === key ? (isDarkMode ? 'text-brand-teal' : 'text-brand-teal font-bold') : ''}`}
+                  >
+                    <img src={flag} alt={code} className="w-5 h-auto rounded-sm" />
+                    <span className="font-medium">{code}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <button
               onClick={toggleTheme}
               className={`p-2 rounded-xl transition-all ${
@@ -110,12 +144,14 @@ const Dashboard = () => {
                 </svg>
               )}
             </button>
-            <div className={`w-9 h-9 rounded-full flex items-center justify-center font-medium text-sm border-2 ${
+            <div className={`w-9 h-9 rounded-full flex items-center justify-center border-2 ${
               isDarkMode 
-                ? 'bg-slate-800 border-slate-700 text-brand-teal' 
-                : 'bg-slate-50 border-white text-brand-teal shadow-sm'
+                ? 'bg-slate-800 border-slate-700 text-slate-400' 
+                : 'bg-slate-50 border-white text-slate-400 shadow-sm'
             }`}>
-              US
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
+              </svg>
             </div>
           </div>
         </header>
