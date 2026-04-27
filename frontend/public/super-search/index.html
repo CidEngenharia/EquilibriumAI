@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca Turbo - EquilibriumAI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">🚀 Busca Turbo</div>
+            <p class="subtitle">Super Buscador Pessoal Inteligente</p>
+        </header>
+
+        <div class="search-box">
+            <div class="input-wrapper">
+                <input type="text" id="searchInput" placeholder="Digite o que deseja encontrar..." autofocus>
+                <button id="clearBtn" class="icon-btn" title="Limpar" onclick="clearInput()">✖</button>
+            </div>
+            
+            <div class="filters">
+                <select id="fileType">
+                    <option value="">Qualquer arquivo</option>
+                    <option value="pdf">PDF (.pdf)</option>
+                    <option value="docx">Word (.docx)</option>
+                    <option value="xlsx">Excel (.xlsx)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn google" onclick="searchGoogle()">Google</button>
+            <button class="btn drive" onclick="searchDrive()">Google Drive</button>
+            <button class="btn github" onclick="searchGithub()">GitHub</button>
+            <button class="btn bing" onclick="searchBing()">Bing</button>
+            <button class="btn duck" onclick="searchDuckDuckGo()">DuckDuckGo</button>
+            <button class="btn reddit" onclick="searchReddit()">Reddit</button>
+        </div>
+
+        <div class="action-buttons main-actions">
+            <button class="btn all" onclick="searchAll()">Busca Geral (G + Drive + Git)</button>
+            <button class="btn deep" onclick="deepSearch()">Varredura Pesada (DEEP SEARCH)</button>
+        </div>
+
+        <div class="presets-section">
+            <h3>⚡ Atalhos Inteligentes</h3>
+            <div class="presets">
+                <button class="preset-btn" onclick="presetPdfDrive()">📄 PDFs no Drive</button>
+                <button class="preset-btn" onclick="presetSpreadsheets()">📊 Planilhas</button>
+                <button class="preset-btn" onclick="presetResumes()">💼 Currículos</button>
+                <button class="preset-btn" onclick="presetCodeGithub()">💻 Códigos GitHub</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

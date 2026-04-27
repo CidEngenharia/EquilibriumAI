@@ -1,9 +1,7 @@
-// decision.js
-
-const express = require("express");
+import express from "express";
 const router = express.Router();
-
-const { resolveTask } = require("../services/aiRouter");
+// Nota: Certifique-se que aiRouter também é ESM ou use a extensão .js se necessário
+import { resolveTask } from "../services/aiRouter.js";
 
 router.post("/", async (req, res) => {
     try {
@@ -23,4 +21,4 @@ router.post("/", async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

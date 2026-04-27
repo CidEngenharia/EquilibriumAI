@@ -1,19 +1,22 @@
-// server.js
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import decisionRoute from "./routes/decision.js";
+import chatRoute from "./routes/chat.js";
 
-const express = require("express");
-const cors = require("cors");
-
-const decisionRoute = require("./routes/decision");
+dotenv.config();
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/decision", decisionRoute);
+// Rotas
+app.use("/decision", decisionRoute);
+app.use("/chat", chatRoute);
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
-    console.log(`🚀 Server rodando na porta ${PORT}`);
+    console.log(`🚀 Backend Equilibrium rodando na porta ${PORT}`);
 });

@@ -1,109 +1,98 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Sun, Moon, User, Loader2 } from 'lucide-react';
-import { useApp, AI_STATUS } from '../context/AppContext.jsx';
+import { motion } from 'framer-motion';
+import { Sun, Moon, User } from 'lucide-react';
+import { useApp, AI_STATUS, SCREENS } from '../context/AppContext.jsx';
 
-const Topbar = ({ title }) => {
-  const { isDarkMode, toggleDarkMode, aiStatus } = useApp();
+const SCREEN_TITLES = {
+  [SCREENS.DASHBOARD]: 'Assistente de Decisão',
+  [SCREENS.DECISION]:  'Nova Decisão',
+  [SCREENS.HISTORY]:   'Minhas Decisões',
+  [SCREENS.SETTINGS]:  'Configurações',
+  [SCREENS.SUPER_SEARCH]: 'Busca Turbo',
+  [SCREENS.ASSISTANT]: 'Assistente de Sabedoria',
+  [SCREENS.TECHNIQUES]: 'Técnicas de Análise',
+  [SCREENS.PHILOSOPHIES]: 'Filosofias de Vida',
+};
+
+const Topbar = () => {
+  const { isDarkMode, toggleDarkMode, aiStatus, activeScreen } = useApp();
 
   const statusConfig = {
     [AI_STATUS.IDLE]: {
       label: 'IA ativa',
-      color: 'bg-emerald-400',
-      pulse: true,
+      color: 'bg-emerald-500',
+      ping: true
     },
     [AI_STATUS.THINKING]: {
-      label: 'Processando...',
-      color: 'bg-amber-400',
-      pulse: true,
+      label: 'IA pensando...',
+      color: 'bg-brand-purple',
+      ping: false
     },
-    [AI_STATUS.DONE]: {
-      label: 'Concluído',
-      color: 'bg-brand-teal',
-      pulse: false,
-    },
+    [AI_STATUS.ERROR]: {
+      label: 'Erro na IA',
+      color: 'bg-rose-500',
+      ping: false
+    }
   };
 
-  const status = statusConfig[aiStatus] || statusConfig[AI_STATUS.IDLE];
+  const currentStatus = statusConfig[aiStatus] || statusConfig[AI_STATUS.IDLE];
 
   return (
     <header className={`
-      shrink-0 h-14 px-5 lg:px-8 flex items-center justify-between border-b z-10
-      transition-colors backdrop-blur-2xl
+      shrink-0 h-16 px-5 lg:px-8 flex items-center border-b z-40
+      transition-all duration-300 backdrop-blur-2xl sticky top-0
       ${isDarkMode
-        ? 'bg-antigravity-base/70 border-antigravity-border'
-        : 'bg-white/80 border-slate-200/60 shadow-sm'
+        ? 'bg-antigravity-base/80 border-antigravity-border'
+        : 'bg-white/90 border-slate-200/60 shadow-sm'
       }
     `}>
-      {/* Left: title */}
-      <AnimatePresence mode="wait">
-        <motion.h1
-          key={title}
-          initial={{ opacity: 0, y: -6 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 6 }}
-          transition={{ duration: 0.2 }}
-          className={`font-display font-semibold text-base tracking-tight ${
-            isDarkMode ? 'text-white' : 'text-slate-900'
-          }`}
-        >
-          {title}
-        </motion.h1>
-      </AnimatePresence>
+      
+      {/* ── Screen Title (Centralizado) ─────────────────────────────────── */}
+      <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-4">
+        <h2 className={`font-display font-bold text-lg ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>
+          {SCREEN_TITLES[activeScreen] || 'EquilibriumAI'}
+        </h2>
+      </div>
 
-      {/* Right: status + theme + avatar */}
-      <div className="flex items-center gap-2">
-        {/* AI Status indicator */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-medium transition-all ${
-            isDarkMode
-              ? 'bg-white/5 border border-white/8 text-slate-300'
-              : 'bg-slate-100 border border-slate-200 text-slate-600'
-          }`}
-        >
-          <span className="relative flex h-1.5 w-1.5">
-            {status.pulse && (
-              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${status.color} opacity-75`} />
+      {/* ── Right Actions ──────────────────────────────────────────────────── */}
+      <div className="ml-auto flex items-center gap-3">
+        {/* IA Status Indicator */}
+        <div className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all ${
+          isDarkMode ? 'bg-white/5 border-white/10' : 'bg-slate-50 border-slate-200'
+        }`}>
+          <div className="relative flex">
+            <div className={`w-2 h-2 rounded-full ${currentStatus.color}`} />
+            {currentStatus.ping && (
+              <div className={`absolute inset-0 w-2 h-2 rounded-full ${currentStatus.color} animate-ping opacity-75`} />
             )}
-            <span className={`relative inline-flex rounded-full h-1.5 w-1.5 ${status.color}`} />
+          </div>
+          <span className={`text-[11px] font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+            {currentStatus.label}
           </span>
-          {aiStatus === AI_STATUS.THINKING ? (
-            <span className="flex items-center gap-1.5">
-              <Loader2 size={10} className="animate-spin" />
-              {status.label}
-            </span>
-          ) : (
-            <span>{status.label}</span>
-          )}
-        </motion.div>
+        </div>
 
-        {/* Dark mode toggle */}
+        {/* Theme Toggle */}
         <motion.button
           whileTap={{ scale: 0.9 }}
           onClick={toggleDarkMode}
-          className={`p-2 rounded-xl transition-all ${
-            isDarkMode
-              ? 'bg-white/5 border border-white/8 text-amber-400 hover:bg-white/10'
-              : 'bg-slate-100 border border-slate-200 text-slate-600 hover:bg-slate-200'
+          className={`p-2.5 rounded-xl border transition-all ${
+            isDarkMode 
+              ? 'bg-white/5 border-white/10 text-decision-gold hover:bg-white/10' 
+              : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 shadow-sm'
           }`}
-          title={isDarkMode ? 'Modo Claro' : 'Modo Escuro'}
         >
-          {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
+          {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
         </motion.button>
 
-        {/* User avatar */}
-        <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors ${
-          isDarkMode
-            ? 'bg-antigravity-surface border-antigravity-border text-slate-400'
-            : 'bg-slate-100 border-white text-slate-500 shadow-sm'
+        {/* User Avatar */}
+        <div className={`h-10 w-10 rounded-xl border flex items-center justify-center overflow-hidden transition-all ${
+          isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-slate-200 shadow-sm'
         }`}>
-          <User size={16} />
+          <User size={20} className={isDarkMode ? 'text-slate-400' : 'text-slate-500'} />
         </div>
       </div>
     </header>
   );
 };
 
-export default Topbar;
+export { Topbar as default };

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { sendMessage } from '../services/api.js';
+import { useApp } from '../context/AppContext.jsx';
 
 // ── Ícones ─────────────────────────────────────────────────────
 const SendIcon = () => (
@@ -121,18 +122,18 @@ const StructuredMessage = ({ text, isDarkMode }) => {
 const Message = ({ msg, isDarkMode }) => {
   const isUser = msg.role === 'user';
   
-  // Estilo WhatsApp com Glassmorphism
+  // Estilo minimalista com cores da marca
   const userStyle = isDarkMode 
-    ? 'bg-[#005c4b]/80 backdrop-blur-md text-slate-100 rounded-tr-sm border border-white/5 shadow-sm' 
-    : 'bg-[#dcf8c6]/90 backdrop-blur-md text-slate-900 rounded-tr-sm border border-white/40 shadow-sm';
+    ? 'bg-brand-purple/20 text-slate-100 rounded-tr-sm border border-brand-purple/30 shadow-sm' 
+    : 'bg-brand-purple/10 text-slate-900 rounded-tr-sm border border-brand-purple/20 shadow-sm';
     
   const agentStyle = isDarkMode
-    ? 'bg-[#202c33]/80 backdrop-blur-md text-slate-200 rounded-tl-sm border border-white/5 shadow-sm'
-    : 'bg-white/90 backdrop-blur-md text-slate-800 rounded-tl-sm border border-white/40 shadow-sm';
+    ? 'bg-slate-900/80 backdrop-blur-md text-slate-200 rounded-tl-sm border border-white/5 shadow-sm'
+    : 'bg-white text-slate-800 rounded-tl-sm border border-slate-200 shadow-sm';
 
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} animate-fade-in`}>
-      <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${isUser ? userStyle : agentStyle}`}>
+      <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${isUser ? userStyle : agentStyle}`}>
         {isUser ? (
           <p className="leading-relaxed">{msg.content}</p>
         ) : (
@@ -165,8 +166,24 @@ const WELCOME = {
 
 // ── Componente Chat principal ───────────────────────────────────
 const Chat = ({ context, isDarkMode }) => {
+  const { assistantInitialMessages, setAssistantInitialMessages } = useApp();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
+
+  // Carrega mensagens iniciais se houver (vindo da landing page)
+  useEffect(() => {
+    if (assistantInitialMessages && assistantInitialMessages.length > 0) {
+      // Mapeia para o formato interno { role, content }
+      const formatted = assistantInitialMessages.map(m => ({
+        role: m.sender === 'ai' ? 'assistant' : 'user',
+        content: m.text
+      }));
+      setMessages(formatted);
+      // Limpa para não repetir se mudar de aba e voltar
+      setAssistantInitialMessages(null);
+    }
+  }, [assistantInitialMessages, setAssistantInitialMessages]);
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const bottomRef = useRef(null);
@@ -231,12 +248,14 @@ const Chat = ({ context, isDarkMode }) => {
       {/* Área de mensagens */}
       <div className="flex-1 overflow-y-auto scrollbar-thin px-4 py-6 space-y-4">
 
-        {/* Mensagem de boas-vindas */}
-        <div className="flex justify-start animate-fade-in">
-          <div className={`max-w-[80%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm leading-relaxed shadow-sm backdrop-blur-md ${isDarkMode ? 'bg-[#202c33]/80 text-slate-200 border border-white/5' : 'bg-white/90 text-slate-800 border border-white/40'}`}>
-            <p className="leading-relaxed">{welcome}</p>
+        {/* Mensagem de boas-vindas (apenas se estiver vazio) */}
+        {isEmpty && (
+          <div className="flex justify-start animate-fade-in">
+            <div className={`max-w-[80%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm leading-relaxed shadow-sm backdrop-blur-md ${isDarkMode ? 'bg-[#202c33]/80 text-slate-200 border border-white/5' : 'bg-white/90 text-slate-800 border border-white/40'}`}>
+              <p className="leading-relaxed">{welcome}</p>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Sugestões rápidas */}
         {isEmpty && (
@@ -309,7 +328,7 @@ const Chat = ({ context, isDarkMode }) => {
             className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all active:scale-90 ${
               isLoading || !input.trim()
                 ? 'bg-slate-200 text-slate-400 dark:bg-slate-800 dark:text-slate-500 cursor-not-allowed'
-                : 'bg-[#25D366] text-white hover:bg-[#128C7E] shadow-md'
+                : 'bg-brand-purple text-white hover:bg-brand-purple-dark shadow-md'
             }`}
           >
             {isLoading ? (

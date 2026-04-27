@@ -1,6 +1,4 @@
-// decisionEngine.js
-
-function classifyTask(input) {
+export function classifyTask(input) {
     const text = input.toLowerCase();
 
     if (text.length < 150) return "simple";
@@ -24,5 +22,3 @@ function classifyTask(input) {
 
     return "medium";
 }
-
-module.exports = { classifyTask };

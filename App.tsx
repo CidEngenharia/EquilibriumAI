@@ -347,6 +347,7 @@ const DAILY_FREE_LIMIT = 5;
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('inicial');
+  const [selectedNiche, setSelectedNiche] = useState<string>('profissional');
   const [ikigaiItems, setIkigaiItems] = useState<IkigaiItem[]>([]);
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
   const [analysis, setAnalysis] = useState<string>('');
@@ -562,8 +563,141 @@ const App: React.FC = () => {
         <main className="flex-1 p-4 lg:p-6 w-full max-w-4xl mx-auto flex flex-col">
           <div className="space-y-6">
             {activeTab === 'inicial' && (
-              <div className="animate-fadeIn space-y-10 text-center py-4 md:py-8">
-                <p className="font-typewriter text-stone-500 italic text-xs md:text-lg leading-relaxed">"E conhecereis a verdade, e a verdade vos libertará." <br/><span className="text-[10px] not-italic text-stone-400">João 8:32</span></p>
+              <div className="animate-fadeIn w-full">
+                {/* HERO SECTION */}
+                <div className={`rounded-[32px] p-8 md:p-12 mb-12 text-center shadow-xl ${isDarkMode ? 'bg-stone-900 border border-white/5' : 'bg-gradient-to-b from-brand-lavender/20 to-white border border-stone-100'}`}>
+                  <span className="inline-block py-1 px-3 rounded-full text-[10px] font-bold uppercase tracking-widest mb-6 bg-brand-teal/20 text-brand-teal">Lançamento</span>
+                  <h1 className={`text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-tight ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>
+                    Tome decisões mais inteligentes com IA <span className="text-brand-teal">em segundos</span>
+                  </h1>
+                  <p className={`text-base md:text-lg mb-8 max-w-2xl mx-auto ${isDarkMode ? 'text-stone-300' : 'text-stone-600'}`}>
+                    O Equilibrium analisa dados e sugere ações estratégicas automaticamente.
+                  </p>
+
+                  <div className={`max-w-md mx-auto p-4 rounded-2xl mb-8 flex flex-col md:flex-row gap-3 ${isDarkMode ? 'bg-stone-800' : 'bg-white shadow-sm border border-stone-100'}`}>
+                    <select 
+                      value={selectedNiche}
+                      onChange={(e) => setSelectedNiche(e.target.value)}
+                      className={`flex-1 p-3 rounded-xl outline-none text-sm appearance-none cursor-pointer ${isDarkMode ? 'bg-stone-900 text-white border-white/10' : 'bg-stone-50 text-stone-800 border-stone-200'} border focus:border-brand-teal transition-colors`}
+                    >
+                      <option value="profissional">IA para Orientação Profissional</option>
+                      <option value="pme">IA para negócios (PMEs)</option>
+                      <option value="condominio">IA para gestão de condomínios</option>
+                      <option value="decisao">IA para tomada de decisão estratégica</option>
+                      <option value="financeiro">IA para análise financeira</option>
+                    </select>
+                    <button 
+                      onClick={() => {
+                        if (selectedNiche === 'decisao') setActiveTab('decisao');
+                        else setIsLoginModalOpen(true);
+                      }}
+                      className="bg-brand-teal hover:bg-[#76d3a2] text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg active:scale-95 whitespace-nowrap"
+                    >
+                      Testar grátis
+                    </button>
+                  </div>
+
+                  <div className="flex items-center justify-center gap-4 text-xs font-medium text-stone-400">
+                    <span className="flex items-center gap-1"><svg className="w-4 h-4 text-brand-teal" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg> Sem cartão de crédito</span>
+                    <span className="flex items-center gap-1"><svg className="w-4 h-4 text-brand-teal" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg> Cancele quando quiser</span>
+                  </div>
+                </div>
+
+                {/* PRODUTO (FEATURES) */}
+                <div className="mb-16">
+                  <h2 className={`text-2xl font-bold text-center mb-10 ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>O que torna o Equilibrium único?</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {[
+                      { title: 'Templates Prontos', desc: 'Analisar negócio, Tomar decisão, Resolver problema com 1 clique.', icon: '⚡' },
+                      { title: 'Histórico de Análises', desc: 'Acesse seus insights passados e acompanhe sua evolução.', icon: '📚' },
+                      { title: 'Score de Recomendação', desc: 'Pontuação clara gerada pela IA para guiar sua decisão final.', icon: '🎯' },
+                      { title: 'Insights Visuais', desc: 'Gráficos interativos, níveis de prioridade e cálculo de riscos.', icon: '📊' }
+                    ].map((feature, i) => (
+                      <div key={i} className={`p-6 rounded-2xl border transition-all hover:-translate-y-1 ${isDarkMode ? 'bg-stone-900 border-white/5 hover:border-brand-teal/50' : 'bg-white border-stone-100 hover:border-brand-teal/50 shadow-sm hover:shadow-md'}`}>
+                        <div className="text-3xl mb-4">{feature.icon}</div>
+                        <h3 className={`text-lg font-bold mb-2 ${isDarkMode ? 'text-stone-100' : 'text-stone-800'}`}>{feature.title}</h3>
+                        <p className={`text-sm ${isDarkMode ? 'text-stone-400' : 'text-stone-500'}`}>{feature.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* MONETIZATION / PLANOS */}
+                <div className="mb-16">
+                  <h2 className={`text-2xl font-bold text-center mb-10 ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>Escolha seu plano</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                    {/* Free */}
+                    <div className={`p-6 rounded-3xl border flex flex-col ${isDarkMode ? 'bg-stone-900 border-white/10' : 'bg-white border-stone-200 shadow-sm'}`}>
+                      <h3 className={`text-xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>Free</h3>
+                      <p className="text-sm text-stone-500 mb-6">Para testar o poder da IA.</p>
+                      <div className={`text-3xl font-bold mb-6 ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>Grátis</div>
+                      <ul className="space-y-3 text-sm text-stone-500 mb-8 flex-1">
+                        <li className="flex gap-2"><span>✓</span> 2 pesquisas por dia</li>
+                        <li className="flex gap-2"><span>✓</span> Acesso aos chats básicos</li>
+                      </ul>
+                      <button onClick={() => setActiveTab('decisao')} className={`w-full py-3 rounded-xl font-bold border transition-colors ${isDarkMode ? 'border-white/20 hover:bg-white/10 text-white' : 'border-stone-200 hover:bg-stone-50 text-stone-800'}`}>Começar grátis</button>
+                    </div>
+
+                    {/* Pro */}
+                    <div className={`p-6 rounded-3xl border-2 flex flex-col relative transform md:-translate-y-4 ${isDarkMode ? 'bg-stone-900 border-brand-teal' : 'bg-white border-brand-teal shadow-xl'}`}>
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-brand-teal text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">Mais Popular</div>
+                      <h3 className={`text-xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>Pro</h3>
+                      <p className="text-sm text-stone-500 mb-6">Para uso pessoal avançado.</p>
+                      <div className={`text-3xl font-bold mb-1 ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>R$ 29<span className="text-lg text-stone-400 font-normal">/mês</span></div>
+                      <ul className="space-y-3 text-sm text-stone-500 mb-8 flex-1 mt-5">
+                        <li className="flex gap-2 text-brand-teal font-medium"><span>✓</span> 5 pesquisas por dia</li>
+                        <li className="flex gap-2 text-stone-600 dark:text-stone-400"><span>✓</span> Histórico de análises</li>
+                        <li className="flex gap-2 text-stone-600 dark:text-stone-400"><span>✓</span> Templates prontos</li>
+                      </ul>
+                      <button onClick={() => setIsLoginModalOpen(true)} className="w-full py-3 rounded-xl font-bold bg-brand-teal hover:bg-[#76d3a2] text-white transition-colors shadow-lg">Assinar Pro</button>
+                    </div>
+
+                    {/* Business */}
+                    <div className={`p-6 rounded-3xl border flex flex-col ${isDarkMode ? 'bg-stone-900 border-white/10' : 'bg-white border-stone-200 shadow-sm'}`}>
+                      <h3 className={`text-xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>Business</h3>
+                      <p className="text-sm text-stone-500 mb-6">Para empresas e equipes.</p>
+                      <div className={`text-3xl font-bold mb-6 ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>Sob consulta</div>
+                      <ul className="space-y-3 text-sm text-stone-500 mb-8 flex-1">
+                        <li className="flex gap-2"><span>✓</span> Pesquisas ilimitadas</li>
+                        <li className="flex gap-2"><span>✓</span> Dashboard & Gráficos</li>
+                        <li className="flex gap-2"><span>✓</span> Score avançado</li>
+                        <li className="flex gap-2"><span>✓</span> Relatório PDF + WhatsApp</li>
+                      </ul>
+                      <button className={`w-full py-3 rounded-xl font-bold border transition-colors ${isDarkMode ? 'border-white/20 hover:bg-white/10 text-white' : 'border-stone-200 hover:bg-stone-50 text-stone-800'}`}>Falar com consultor</button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* CASOS DE USO E PROVA SOCIAL */}
+                <div className="mb-16">
+                  <h2 className={`text-2xl font-bold text-center mb-10 ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>Quem usa aprova</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div className={`p-6 rounded-2xl ${isDarkMode ? 'bg-stone-800' : 'bg-stone-50'}`}>
+                      <div className="flex text-brand-teal mb-3">{'★'.repeat(5)}</div>
+                      <p className={`italic mb-4 text-sm ${isDarkMode ? 'text-stone-300' : 'text-stone-600'}`}>"Como síndico, eu perdia horas analisando orçamentos. O Equilibrium cruzou os dados das propostas em segundos e me deu um score de risco e recomendação. Incrível."</p>
+                      <div className="font-bold text-sm text-stone-500">- Carlos M., Síndico Profissional</div>
+                    </div>
+                    <div className={`p-6 rounded-2xl ${isDarkMode ? 'bg-stone-800' : 'bg-stone-50'}`}>
+                      <div className="flex text-brand-teal mb-3">{'★'.repeat(5)}</div>
+                      <p className={`italic mb-4 text-sm ${isDarkMode ? 'text-stone-300' : 'text-stone-600'}`}>"Estávamos em dúvida se abríamos uma nova filial. Usamos a IA para tomada de decisão estratégica e os gráficos de risco nos ajudaram a esperar o melhor momento."</p>
+                      <div className="font-bold text-sm text-stone-500">- Ana T., Dona de PME</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* FOOTER */}
+                <footer className={`mt-20 pt-8 border-t flex flex-col md:flex-row items-center justify-between gap-4 text-xs ${isDarkMode ? 'border-white/10 text-stone-500' : 'border-stone-200 text-stone-400'}`}>
+                  <div>
+                    <p className="font-typewriter italic mb-2">"E conhecereis a verdade, e a verdade vos libertará." <span className="not-italic opacity-70">João 8:32</span></p>
+                  </div>
+                  <div className="flex flex-col md:flex-row items-center gap-4">
+                    <span className="font-bold tracking-widest uppercase">Criado por CidEngenharia</span>
+                    <div className="flex gap-3">
+                      <a href="#" className="hover:text-brand-teal transition-colors">Termos de Uso</a>
+                      <a href="#" className="hover:text-brand-teal transition-colors">Política de Privacidade</a>
+                    </div>
+                  </div>
+                </footer>
               </div>
             )}
 

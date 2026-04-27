@@ -5,6 +5,7 @@ import Topbar from '../components/Topbar.jsx';
 import DecisionWizard from '../components/DecisionWizard.jsx';
 import HistoryPage from './HistoryPage.jsx';
 import Chat from '../components/Chat.jsx';
+import SuperSearch from './SuperSearch.jsx';
 import { useApp, SCREENS } from '../context/AppContext.jsx';
 
 // ── Dashboard Home ──────────────────────────────────────────────────────────
@@ -23,7 +24,7 @@ const DashboardHome = ({ isDarkMode }) => {
       <div className="text-center space-y-3 py-4">
         <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.1 }}>
           <h1 className={`text-2xl font-display font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
-            Bom dia, usuário 👋
+            Olá posso te ajudar em qual decisão hoje?
           </h1>
           <p className={`text-sm mt-2 ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
             O EquilibriumAI está pronto para analisar sua próxima decisão.
@@ -99,13 +100,6 @@ const DashboardHome = ({ isDarkMode }) => {
         </motion.div>
       )}
 
-      {/* Assistente de chat (contexto geral) */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
-        <p className={`text-xs font-medium uppercase tracking-wider mb-3 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>Assistente de sabedoria</p>
-        <div className={`rounded-2xl overflow-hidden border ${isDarkMode ? 'border-antigravity-border' : 'border-slate-200'}`} style={{ height: '380px' }}>
-          <Chat context="geral" isDarkMode={isDarkMode} />
-        </div>
-      </motion.div>
     </motion.div>
   );
 };
@@ -153,13 +147,21 @@ const Dashboard = () => {
       case SCREENS.DECISION:  return <DecisionWizard isDarkMode={isDarkMode} />;
       case SCREENS.HISTORY:   return <HistoryPage isDarkMode={isDarkMode} />;
       case SCREENS.SETTINGS:  return <SettingsPage isDarkMode={isDarkMode} />;
+      case SCREENS.SUPER_SEARCH: return <SuperSearch />;
+      case SCREENS.ASSISTANT: return (
+        <div className={`rounded-2xl overflow-hidden border ${isDarkMode ? 'border-antigravity-border' : 'border-slate-200'} h-[calc(100vh-120px)]`}>
+          <Chat context="geral" isDarkMode={isDarkMode} />
+        </div>
+      );
+      case SCREENS.TECHNIQUES: return <div className="text-center py-20"><h2 className="text-xl font-bold">Técnicas de Análise</h2><p className="text-slate-500 mt-2">Em breve: Guia completo de heurísticas e modelos mentais.</p></div>;
+      case SCREENS.PHILOSOPHIES: return <div className="text-center py-20"><h2 className="text-xl font-bold">Filosofias de Vida</h2><p className="text-slate-500 mt-2">Em breve: Compêndio de sabedoria estoica, zen e prática.</p></div>;
       default:                return <DashboardHome isDarkMode={isDarkMode} />;
     }
   };
 
   return (
     <main className="flex-1 flex flex-col h-full overflow-hidden relative z-10">
-      <Topbar title={SCREEN_TITLES[activeScreen]} />
+      <Topbar />
       <div className="flex-1 overflow-y-auto scrollbar-thin">
         <div className="px-4 lg:px-6 py-6">
           <AnimatePresence mode="wait">

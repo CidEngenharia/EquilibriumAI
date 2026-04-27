@@ -2,10 +2,15 @@ import React, { createContext, useContext, useState, useCallback } from 'react';
 
 // ── Tipos de telas disponíveis ──────────────────────────────────────────────
 export const SCREENS = {
+  LANDING: 'landing',
   DASHBOARD: 'dashboard',
   DECISION: 'decision',
   HISTORY: 'history',
   SETTINGS: 'settings',
+  SUPER_SEARCH: 'super-search',
+  ASSISTANT: 'assistant',
+  TECHNIQUES: 'techniques',
+  PHILOSOPHIES: 'philosophies',
 };
 
 // ── Status da IA ────────────────────────────────────────────────────────────
@@ -18,18 +23,27 @@ export const AI_STATUS = {
 const AppContext = createContext(null);
 
 export function AppProvider({ children }) {
-  const [activeScreen, setActiveScreen] = useState(SCREENS.DASHBOARD);
+  const [activeScreen, setActiveScreen] = useState(SCREENS.LANDING);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(
     typeof window !== 'undefined' ? window.innerWidth >= 1024 : true
   );
   const [aiStatus, setAiStatus] = useState(AI_STATUS.IDLE);
   const [history, setHistory] = useState([]);
-
+  const [assistantInitialMessages, setAssistantInitialMessages] = useState(null);
+  const [selectedNiche, setSelectedNiche] = useState('profissional');
 
   // Navega para uma tela e fecha sidebar no mobile
-  const navigate = useCallback((screen) => {
+  const navigate = useCallback((screen, options = {}) => {
     setActiveScreen(screen);
+    if (options.initialMessages) {
+      setAssistantInitialMessages(options.initialMessages);
+    } else {
+      setAssistantInitialMessages(null);
+    }
+    if (options.niche) {
+      setSelectedNiche(options.niche);
+    }
     if (window.innerWidth < 1024) setIsSidebarOpen(false);
   }, []);
 
@@ -71,6 +85,10 @@ export function AppProvider({ children }) {
     history,
     saveDecision,
     removeDecision,
+    selectedNiche,
+    setSelectedNiche,
+    assistantInitialMessages,
+    setAssistantInitialMessages
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

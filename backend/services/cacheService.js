@@ -1,17 +1,13 @@
-// cacheService.js
-
 const cache = new Map();
 
-function getCache(key) {
+export function getCache(key) {
     return cache.get(key);
 }
 
-function setCache(key, value) {
+export function setCache(key, value) {
     cache.set(key, value);
 }
 
-function hasCache(key) {
+export function hasCache(key) {
     return cache.has(key);
 }
-
-module.exports = { getCache, setCache, hasCache };
